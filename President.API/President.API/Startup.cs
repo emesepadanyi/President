@@ -18,6 +18,7 @@ using President.DAL.Entities;
 using President.API.ResponseModels;
 using President.API.Auth;
 using President.API.Helpers;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace President.API
 {
@@ -105,9 +106,17 @@ namespace President.API
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "President", Version = "v1" });
+                options.AddSecurityDefinition("oauth2", new ApiKeyScheme
+                {
+                    Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                    In = "header",
+                    Name = "Authorization",
+                    Type = "apiKey"
+                });
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+                options.SwaggerDoc("v1", new Info { Title = "President", Version = "v1" });
             });
         }
 
