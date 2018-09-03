@@ -101,6 +101,8 @@ namespace President.API
 
             services.AddAutoMapper();
 
+            services.AddCors();
+
             services.AddMvc()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -141,6 +143,7 @@ namespace President.API
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors(builder => builder.WithOrigins("http://localhost"));
             app.UseMvc();
         }
     }
