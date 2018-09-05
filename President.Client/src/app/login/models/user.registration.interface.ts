@@ -3,5 +3,4 @@ export interface UserRegistration {
     password: string;
     firstName: string;
     lastName:  string;
-    location: string;
 }
