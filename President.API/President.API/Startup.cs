@@ -1,24 +1,32 @@
-﻿using System.Text;
-using System;
+﻿using System;
+using System.Net;
+using System.Text;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.Filters;
 
 using President.DAL.Context;
 using President.DAL.Entities;
 using President.API.ResponseModels;
 using President.API.Auth;
 using President.API.Helpers;
-using Swashbuckle.AspNetCore.Filters;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace President.API
 {
@@ -26,7 +34,7 @@ namespace President.API
     {
         private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure
         private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
-        
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -37,14 +45,24 @@ namespace President.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Add framework services.
             services.AddDbContext<PresidentDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly("President.DAL")));
+                    b => b.MigrationsAssembly("President.DAL")));
 
             services.AddSingleton<IJwtFactory, JwtFactory>();
 
+            // Register the ConfigurationBuilder instance of FacebookAuthSettings
+            //services.Configure<FacebookAuthSettings>(Configuration.GetSection(nameof(FacebookAuthSettings)));
+
+            services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
+            // jwt wire up
+            // Get options from app settings
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 
+            // Configure JwtIssuerOptions
             services.Configure<JwtIssuerOptions>(options =>
             {
                 options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
@@ -80,11 +98,11 @@ namespace President.API
                 configureOptions.SaveToken = true;
             });
 
+            // api user claim policy
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("ApiUser", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
             });
-
 
             // add identity
             var builder = services.AddIdentityCore<User>(o =>
@@ -101,11 +119,25 @@ namespace President.API
 
             services.AddAutoMapper();
 
-            services.AddCors();
-
             services.AddMvc()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    new CorsPolicyBuilder()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:4200")
+                        .Build());
+            });
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
+            });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
@@ -128,7 +160,6 @@ namespace President.API
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
-
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "President V1");
@@ -136,15 +167,30 @@ namespace President.API
 
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
-            app.UseHttpsRedirection();
+            app.UseExceptionHandler(
+                builder =>
+                {
+                    builder.Run(
+                        async context =>
+                            {
+                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+                                var error = context.Features.Get<IExceptionHandlerFeature>();
+                                if (error != null)
+                                {
+                                    //context.Response.AddApplicationError(error.Error.Message)
+                                    await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
+                                }
+                            });
+                });
+
             app.UseAuthentication();
-            app.UseCors(builder => builder.WithOrigins("http://localhost"));
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
+            app.UseCors("AllowSpecificOrigin");
         }
     }
 }
