@@ -164,7 +164,6 @@ namespace President.API
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "President V1");
                 });
-
                 app.UseDeveloperExceptionPage();
             }
 

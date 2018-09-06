@@ -15,7 +15,7 @@ import { HeaderComponent } from './header/header.component';
 /* Account Imports */
 import { AccountModule }  from './login/account/account.module';
 /* Dashboard Imports */
-import { DashboardModule }  from './login/dashboard/dashboard.module';
+import { DashboardModule }  from './dashboard/dashboard.module';
 
 import { ConfigService } from './services/config.service';
 
