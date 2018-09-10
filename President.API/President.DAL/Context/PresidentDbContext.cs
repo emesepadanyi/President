@@ -10,5 +10,10 @@ namespace President.DAL.Context
             : base(options)
         {
         }
+
+        public DbSet<Relationship> Relationships { get; set; }
+        public DbSet<Game> Games { get; set; }
+        public DbSet<GameStatistics> GameStatistics { get; set; }
+        public DbSet<PlayerStatistics> PlayerStatistics { get; set; }
     }
 }
