@@ -11,6 +11,7 @@ import { SettingsComponent } from './settings/settings.component';
 
 import { AuthGuard } from '../auth.guard';
 import { DashboardService } from './services/dashboard.service';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   imports: [
@@ -19,7 +20,7 @@ import { DashboardService } from './services/dashboard.service';
     routing,
     SharedModule
   ],
-  declarations: [RootComponent,HomeComponent, SettingsComponent],
+  declarations: [RootComponent,HomeComponent, SettingsComponent, ChatComponent],
   exports:      [ ],
   providers:    [AuthGuard,DashboardService]
 })

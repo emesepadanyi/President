@@ -6,7 +6,6 @@ import { AuthenticateXHRBackend } from './authenticate-xhr.backend';
 
 import { routing } from './app.routing';
 
-
 /* App Root */
 import { AppComponent } from './app.component';
 import { HomeComponent } from './login/home/home.component';

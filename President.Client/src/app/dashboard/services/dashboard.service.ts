@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 
 import { HomeDetails } from '../models/home.details.interface';
 import { ConfigService } from '../../services/config.service';
