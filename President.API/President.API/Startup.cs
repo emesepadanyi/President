@@ -27,6 +27,7 @@ using President.API.Auth;
 using President.API.Helpers;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using President.API.Hubs;
 
 namespace President.API
 {
@@ -152,6 +153,8 @@ namespace President.API
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
                 options.SwaggerDoc("v1", new Info { Title = "President", Version = "v1" });
             });
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -188,8 +191,12 @@ namespace President.API
             app.UseAuthentication();
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseMvc();
             app.UseCors("AllowSpecificOrigin");
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chat");
+            });
+            app.UseMvc();
         }
     }
 }
