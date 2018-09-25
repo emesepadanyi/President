@@ -44,7 +44,7 @@ export class UserService extends BaseService {
       .catch(this.handleError);
   }  
 
-   login(userName, password) {
+  login(userName, password) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
 
@@ -73,7 +73,7 @@ export class UserService extends BaseService {
     return this.loggedIn;
   }
 
-  facebookLogin(accessToken:string) {
+  /* facebookLogin(accessToken:string) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     let body = JSON.stringify({ accessToken });  
@@ -88,5 +88,5 @@ export class UserService extends BaseService {
         return true;
       })
       .catch(this.handleError);
-  }
+  } */
 }

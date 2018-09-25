@@ -31,15 +31,15 @@ namespace President.API.Controllers
             // retrieve the user info
             //HttpContext.User
             var userId = _caller.Claims.Single(c => c.Type == "id");
-            var customer = await _appDbContext.Users.SingleAsync(user => user.Id == userId.Value);
+            var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userId.Value);
 
             return new OkObjectResult(new
             {
                 Message = "This is secure API and user data!",
-                customer.FirstName,
-                customer.LastName,
-                customer.PictureUrl,
-                customer.FacebookId
+                user.FirstName,
+                user.LastName,
+                user.PictureUrl,
+                user.FacebookId
                 //, customer.Location,
                 //customer.Locale,
                 //customer.Gender

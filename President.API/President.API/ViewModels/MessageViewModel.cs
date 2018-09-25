@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace President.API.ViewModels
 {
-    public class MessageModel
+    public class MessageViewModel
     {
-        public string Type { get; set; }
-        public string Payload { get; set; }
+        public string UserName { get; set; }
+        public string Message { get; set; }
     }
 }

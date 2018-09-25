@@ -3,6 +3,7 @@ import { ConfigService } from "../../services/config.service";
 import { HubConnection } from '@aspnet/signalr';
 import * as signalR from '@aspnet/signalr';
 import { Http, Headers } from "@angular/http";
+import { ChatMessage } from "../models/chat.message.interface";
 
 
 @Component({
@@ -13,7 +14,7 @@ import { Http, Headers } from "@angular/http";
 
 export class ChatComponent implements OnInit {
   private _hubConnection: HubConnection;
-  messages: string[] = [];
+  messages: ChatMessage[] = [];
   message: string;
 
   constructor(private http: Http, private configService: ConfigService) { }
@@ -28,8 +29,9 @@ export class ChatComponent implements OnInit {
       .then(() => console.log('Connection started!'))
       .catch(err => console.log('Error while establishing connection :('));
 
-    this._hubConnection.on('BroadcastMessage', (payload: any) => {
-      this.messages.push( payload );
+    this._hubConnection.on('BroadcastMessage', (chatMessage: ChatMessage) => {
+      console.log(chatMessage);
+      this.messages.push( chatMessage );
     });
   }
 

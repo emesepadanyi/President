@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <h1>Send some basic messages</h1>
+  <h1>Send messages to everyone online!</h1>
   <form class="form-inline" (ngSubmit)="sendMessage()" #messageForm="ngForm">
       <div class="row">
           <div class="col">
@@ -7,7 +7,7 @@
               <input type="text" class="form-control" id="message" placeholder="your message..." name="message" [(ngModel)]="message" required>
           </div>
           <div class="col">
-              <button type="submit" class="btn btn-primary" [disabled]="!messageForm.valid">Send SignalR Message</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!messageForm.valid">Send</button>
           </div>
       </div>
   </form>
@@ -15,18 +15,10 @@
   <div class="row" *ngIf="messages.length > 0">
       <div class="table-responsive">
           <table class="table table-striped">
-              <thead>
-                  <tr>
-                      <th>#</th>
-                      <th>Messages</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr *ngFor="let message of messages; let i = index">
-                      <td>{{i + 1}}</td>
-                      <td>{{message}}</td>
-                  </tr>
-              </tbody>
+                <tr *ngFor="let message of messages">
+                    <td width="20%">{{message.userName}}</td>
+                    <td width="80%">{{message.message}}</td>
+                </tr>
           </table>
       </div>
   </div>

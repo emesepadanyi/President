@@ -131,7 +131,7 @@ namespace President.API
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()
-                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyOrigin()
                         .Build());
             });
 
