@@ -28,6 +28,8 @@ using President.API.Helpers;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using President.API.Hubs;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
 namespace President.API
 {
@@ -97,8 +99,26 @@ namespace President.API
                 configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
                 configureOptions.TokenValidationParameters = tokenValidationParameters;
                 configureOptions.SaveToken = true;
-            });
 
+                configureOptions.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/gameHub")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+            
             // api user claim policy
             services.AddAuthorization(options =>
             {
@@ -182,7 +202,6 @@ namespace President.API
                                 var error = context.Features.Get<IExceptionHandlerFeature>();
                                 if (error != null)
                                 {
-                                    //context.Response.AddApplicationError(error.Error.Message)
                                     await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
                                 }
                             });
@@ -195,6 +214,7 @@ namespace President.API
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chat");
+                routes.MapHub<GameHub>("/gameHub");
             });
             app.UseMvc();
         }
