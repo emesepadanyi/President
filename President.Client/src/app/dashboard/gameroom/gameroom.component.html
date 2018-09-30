@@ -1,0 +1,26 @@
+<div class="playingCards faceImages rotateHand" style="background-color: #FFFC10; width: 100%; height: 100%" >
+  <ul class="hand">
+    <li *ngFor="let card of hand" class="card rank-{{card.name | lowercase}} {{card.suit}}">
+        <span class="rank">{{card.name}}</span>
+        <div ngSwitch="{{card.suit}}">
+          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+        </div>
+    </li>
+  </ul>
+
+  <ul class="hand">
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+    <li> <div class="card back">*</div> </li>
+  </ul>
+</div>

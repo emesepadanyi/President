@@ -1,4 +1,5 @@
-﻿using President.DAL.Entities;
+﻿using President.API.Dtos;
+using President.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,14 @@ namespace President.API.Game
             }
         }
 
-        public List<Card> Cards(string playerId)
+        public List<CardDto> Cards(string playerId)
         {
-            return Hands[playerId].Cards;
+            List<CardDto> cards = new List<CardDto>();
+            foreach (var card in Hands[playerId].Cards)
+            {
+                cards.Add(new CardDto(card));
+            }
+            return cards;
         }
 
         public Dictionary<string, int> HandStatus(string playerId)

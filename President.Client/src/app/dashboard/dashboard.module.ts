@@ -12,6 +12,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { AuthGuard } from '../auth.guard';
 import { DashboardService } from './services/dashboard.service';
 import { ChatComponent } from './chat/chat.component';
+import { GameroomComponent } from './gameroom/gameroom.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,7 @@ import { ChatComponent } from './chat/chat.component';
     routing,
     SharedModule
   ],
-  declarations: [RootComponent,HomeComponent, SettingsComponent, ChatComponent],
+  declarations: [RootComponent,HomeComponent, SettingsComponent, ChatComponent, GameroomComponent],
   exports:      [ ],
   providers:    [AuthGuard,DashboardService]
 })
