@@ -1,0 +1,11 @@
+.windowHeight{
+    height: calc(100vh - 56px);
+    height: -o-calc(100vh - 56px); /* opera */
+    height: -webkit-calc(100vh - 56px); /* google, safari */
+    height: -moz-calc(100vh - 56px); /* firefox */
+}
+
+.noPadding{
+    padding: 0 !important;
+    margin: 0;
+}

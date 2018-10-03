@@ -1,0 +1,20 @@
+.gameSpace {
+    position: relative;
+    width: 100%;
+    background-color: aqua;
+    height: calc(100vh - 56px);
+    height: -o-calc(100vh - 56px); /* opera */
+    height: -webkit-calc(100vh - 56px); /* google, safari */
+    height: -moz-calc(100vh - 56px); /* firefox */
+
+    .ownHand{
+        position: absolute;
+        bottom: 0;
+        left: 40%;
+    }
+
+    .enemyHand{
+        //position: absolute;
+
+    }
+}

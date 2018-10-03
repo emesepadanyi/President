@@ -5,15 +5,17 @@ import { ConfigService } from '../../services/config.service';
 import { HubConnection } from '@aspnet/signalr';
 import signalR = require('@aspnet/signalr');
 import { GameStatus } from '../models/game.status.interface';
+import { Hand } from '../models/hand.interface';
 
 @Component({
   selector: 'app-gameroom',
   templateUrl: './gameroom.component.html',
-  styleUrls: ['./gameroom.component.css']
+  styleUrls: ['./gameroom.component.scss', './card.css']
 })
 export class GameroomComponent implements OnInit {
   private _hubConnection: HubConnection;
   private hand : Card[];
+  private enemyHands: Hand[];
 
   constructor(private http: Http, private configService: ConfigService) { }
 
@@ -30,9 +32,12 @@ export class GameroomComponent implements OnInit {
       .catch(err => console.log('Error while establishing connection :('));
 
     this._hubConnection.on('StartGame', (gameStatus: GameStatus) => {
-      console.log("something happened");
-      console.log(gameStatus);
       this.hand = gameStatus.cards;
+      this.enemyHands = gameStatus.hands;
     });
+  }
+
+  counter(i: number){
+    return new Array(i);
   }
 }
