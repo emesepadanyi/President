@@ -1,9 +1,5 @@
 ﻿using President.API.Dtos;
-using President.DAL.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace President.API.Game
 {
@@ -11,7 +7,7 @@ namespace President.API.Game
     public class OnlineGame
     {
        // private List<User> Players { get; }
-        private Dictionary<string, Hand> Hands { get; } = new Dictionary<string, Hand>();
+        private Dictionary<string, Game.Hand> Hands { get; } = new Dictionary<string, Game.Hand>();
 
 
         public OnlineGame(string[] playerIds)
@@ -19,7 +15,7 @@ namespace President.API.Game
             Deck deck = new Deck();
             foreach (var player in playerIds)
             {
-                Hands.Add(player, new Hand(deck.dealNCards(13)));
+                Hands.Add(player, new Game.Hand(deck.dealNCards(13)));
             }
         }
 
@@ -33,13 +29,16 @@ namespace President.API.Game
             return cards;
         }
 
-        public Dictionary<string, int> HandStatus(string playerId)
+        public List<ViewModels.Hand> HandStatus(string playerId)
         {
-            Dictionary<string, int> handStatus = new Dictionary<string, int>();
+            var handStatus = new List<ViewModels.Hand>();
 
             foreach (var hand in Hands)
             {
-                handStatus.Add(hand.Key, hand.Value.Cards.Count);
+                if (!hand.Key.Equals(playerId))
+                {
+                    handStatus.Add(new ViewModels.Hand() { UserName = hand.Key, NoCards = hand.Value.Cards.Count});
+                }
             }
 
             return handStatus;
