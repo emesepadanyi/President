@@ -35,11 +35,16 @@ namespace President.API.Game
 
             foreach (var hand in Hands)
             {
-                if (!hand.Key.Equals(playerId))
-                {
-                    handStatus.Add(new ViewModels.Hand() { UserName = hand.Key, NoCards = hand.Value.Cards.Count});
-                }
+                handStatus.Add(new ViewModels.Hand() { UserName = hand.Key, NoCards = hand.Value.Cards.Count});
             }
+
+            while(handStatus[0].UserName != playerId)
+            {
+                var temp = handStatus[0];
+                handStatus.RemoveAt(0);
+                handStatus.Add(temp);
+            }
+            handStatus.RemoveAt(0);
 
             return handStatus;
         }
