@@ -9,12 +9,22 @@
 
     .ownHand{
         position: absolute;
+        width: min-content;
         bottom: 0;
         left: 40%;
     }
 
     .enemyHand{
-        //position: absolute;
+        width: min-content;
+    }
 
+    .throwing_deck{
+        position: absolute;
+        width: min-content;
+        left: 50%;
+        top: calc(50vh - 140px);
+        top: -o-calc(50vh - 140px); /* opera */
+        top: -webkit-calc(50vh - 140px); /* google, safari */
+        top: -moz-calc(50vh - 140px); /* firefox */
     }
 }

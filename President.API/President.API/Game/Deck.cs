@@ -37,7 +37,7 @@ namespace President.API.Game
         public List<Card> dealNCards(int N)
         {
             List<Card> fewCards = new List<Card>(N);
-            fewCards = cards.GetRange(0, N);
+            fewCards = cards.GetRange(0, N).OrderBy(card => card.cardName).ToList();
             cards.RemoveRange(0, N);
             return fewCards;
         }

@@ -15,6 +15,7 @@ import { Hand } from '../models/hand.interface';
 export class GameroomComponent implements OnInit {
   private _hubConnection: HubConnection;
   private hand : Card[];
+  private deck : Card[] = new Array<Card>();
   private enemyHands: Hand[];
 
   constructor(private http: Http, private configService: ConfigService) { }
@@ -39,5 +40,16 @@ export class GameroomComponent implements OnInit {
 
   counter(i: number){
     return new Array(i);
+  }
+
+  clickedOn(card: Card){
+    console.log(card);
+
+    const index = this.hand.indexOf(card, 0);
+    if (index > -1) {
+      this.hand.splice(index, 1);
+    }
+
+    this.deck.push(card);
   }
 }
