@@ -7,5 +7,6 @@ namespace President.API.ViewModels
     {
         public List<CardDto> Cards { get; set; }
         public List<Hand> Hands { get; set; }
+        public string NextUser { get; set; }
     }
 }

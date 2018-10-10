@@ -4,4 +4,5 @@ import { Hand } from "./hand.interface";
 export interface GameStatus{
     cards: Card[];
     hands: Hand[];
+    nextUser: string;
 }

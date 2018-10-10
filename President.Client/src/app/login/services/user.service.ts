@@ -56,6 +56,7 @@ export class UserService extends BaseService {
       .map(res => res.json())
       .map(res => {
         localStorage.setItem('auth_token', res.auth_token);
+        localStorage.setItem('user_name', userName);
         this.loggedIn = true;
         this._authNavStatusSource.next(true);
         return true;
@@ -65,6 +66,7 @@ export class UserService extends BaseService {
 
   logout() {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_name');
     this.loggedIn = false;
     this._authNavStatusSource.next(false);
   }

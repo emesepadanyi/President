@@ -12,10 +12,19 @@
         width: min-content;
         bottom: 0;
         left: 40%;
+
+        li.activePlayer:hover{
+            bottom: 1em;
+            cursor: pointer;
+        }
     }
 
     .enemyHand{
         width: min-content;
+
+        .activePlayer{
+            color: brown;
+        }
     }
 
     .throwing_deck{

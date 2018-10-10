@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using President.API.Dtos;
 using President.API.Game;
 using President.API.Hubs;
 using President.API.ViewModels;
@@ -41,10 +42,9 @@ namespace President.API.Controllers
         [HttpPost]
         public async Task<string> PostAsync([FromBody]string[] userIDs)
         {
-            var userID = _caller.Claims.Single(c => c.Type == "id");
-            var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userID.Value);
+            var user = await getUserAsync();
 
-            //check if the enemies are valid & online!!!
+            //check if the enemies are valid & online & not in other game!!!
 
             OnlineGame game = new OnlineGame(userIDs);
 
@@ -53,9 +53,10 @@ namespace President.API.Controllers
             string retMessage = string.Empty;
             try
             {
+                var nextUser = game.getNextUser();
                 foreach (var userId in userIDs)
                 {
-                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId) });
+                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser });
                 }
                 retMessage = "Success";
             }
@@ -64,6 +65,13 @@ namespace President.API.Controllers
                 retMessage = e.ToString();
             }
             return retMessage;
+        }
+        
+        private async Task<User> getUserAsync()
+        {
+            var userID = _caller.Claims.Single(c => c.Type == "id");
+            var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userID.Value);
+            return user;
         }
     }
 }

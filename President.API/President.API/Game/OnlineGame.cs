@@ -6,7 +6,7 @@ namespace President.API.Game
 
     public class OnlineGame
     {
-       // private List<User> Players { get; }
+       private List<string> orderOfPlayers { get; }
         private Dictionary<string, Game.Hand> Hands { get; } = new Dictionary<string, Game.Hand>();
 
 
@@ -17,6 +17,8 @@ namespace President.API.Game
             {
                 Hands.Add(player, new Game.Hand(deck.dealNCards(13)));
             }
+
+            orderOfPlayers = new List<string>(playerIds);
         }
 
         public List<CardDto> Cards(string playerId)
@@ -47,6 +49,14 @@ namespace President.API.Game
             handStatus.RemoveAt(0);
 
             return handStatus;
+        }
+
+        public string getNextUser()
+        {
+            var user = this.orderOfPlayers[0];
+            this.orderOfPlayers.RemoveAt(0);
+            this.orderOfPlayers.Add(user);
+            return user;
         }
     }
 }

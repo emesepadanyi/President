@@ -1,21 +1,25 @@
 <div class="gameSpace">
   <div *ngFor='let enemyHand of enemyHands' class="enemyHand playingCards faceImages rotateHand">
-    {{enemyHand.userName}}
+    <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.userName}}</div>
     <ul class="hand">
       <li *ngFor='let in of counter(enemyHand.noCards) ; let i = index' class="card back">*</li>
     </ul>
   </div>
   <div class="ownHand playingCards faceImages rotateHand">
     <ul class="hand">
-      <li *ngFor="let card of hand"><label class="card rank-{{card.name | lowercase}} {{card.suit}}" (click)="clickedOn(card)">
-          <span class="rank">{{card.name}}</span>
-          <div ngSwitch="{{card.suit}}">
-            <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
-            <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
-            <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
-            <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
-          </div>
-      </label></li>
+      <li *ngFor = "let card of hand" 
+        class = "card rank-{{card.name | lowercase}} {{card.suit}}" 
+        [class.activePlayer] = "isActivePlayer(user)" 
+        (click) = "isActivePlayer(user) && clickedOn(card)">
+
+        <span class="rank">{{card.name}}</span>
+        <div ngSwitch="{{card.suit}}">
+          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+        </div>
+      </li>
     </ul>
   </div>
   <div class ="throwing_deck playingCards faceImages">
