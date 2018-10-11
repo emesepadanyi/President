@@ -6,5 +6,6 @@ namespace President.API.Hubs
     public interface IGameHub
     {
         Task StartGame(GameViewModel gameViewModel);
+        Task PutCard(MoveViewModel moveViewModel);
     }
 }

@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Card } from '../models/card.interface';
-import { Http } from '@angular/http';
-import { ConfigService } from '../../services/config.service';
+import { Http, Headers } from '@angular/http';
 import { HubConnection } from '@aspnet/signalr';
 import signalR = require('@aspnet/signalr');
+
 import { GameStatus } from '../models/game.status.interface';
-import { Hand } from '../models/hand.interface';
+import { Hand }       from '../models/hand.interface';
+import { Card }       from '../models/card.interface';
+import { MoveStatus } from '../models/move.status.interface';
+
+import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-gameroom',
@@ -40,6 +43,14 @@ export class GameroomComponent implements OnInit {
       this.enemyHands = gameStatus.hands;
       this.nextUser = gameStatus.nextUser;
     });
+
+    this._hubConnection.on('PutCard', (moveStatus: MoveStatus) => {
+      console.log(moveStatus);
+      this.hand = moveStatus.cards;
+      this.enemyHands = moveStatus.hands;
+      this.nextUser = moveStatus.nextUser;
+      this.deck.push(moveStatus.movedCard);
+    });
   }
 
   counter(i: number){
@@ -51,13 +62,21 @@ export class GameroomComponent implements OnInit {
   }
 
   clickedOn(card: Card){
-    console.log(card);
-
     const index = this.hand.indexOf(card, 0);
     if (index > -1) {
       this.hand.splice(index, 1);
     }
 
-    this.deck.push(card);
+    this.sendCard(card);
+  }
+
+  public sendCard(card: Card) {
+    let headers = new Headers();
+    headers.append('Content-Type', 'text/json');
+    let authToken = localStorage.getItem('auth_token');
+    headers.append('Authorization', `Bearer ${authToken}`);
+
+    this.http.post(this.configService.getApiURI() + "/game/card", card, {headers})
+      .subscribe( () => {});
   }
 }

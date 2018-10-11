@@ -7,7 +7,7 @@ namespace President.API.Game
 {
     public class Deck
     {
-        public List<Card> cards { get; set; } = new List<Card>();
+        public List<Card> Cards { get; set; } = new List<Card>();
 
         public Deck()
         {
@@ -15,7 +15,7 @@ namespace President.API.Game
             {
                 foreach (CardNames name in Enum.GetValues(typeof(CardNames)))
                 {
-                    cards.Add(new Card { cardName = name, suit = suit });
+                    Cards.Add(new Card { cardName = name, suit = suit });
                 }
             }
 
@@ -25,20 +25,20 @@ namespace President.API.Game
         private void Shuffle()
         {
             Random r = new Random();
-            for (int n = cards.Count - 1; n > 0; --n)
+            for (int n = Cards.Count - 1; n > 0; --n)
             {
                 int k = r.Next(n + 1);
-                Card temp = cards[n];
-                cards[n] = cards[k];
-                cards[k] = temp;
+                Card temp = Cards[n];
+                Cards[n] = Cards[k];
+                Cards[k] = temp;
             }
         }
 
-        public List<Card> dealNCards(int N)
+        public List<Card> DealNCards(int N)
         {
             List<Card> fewCards = new List<Card>(N);
-            fewCards = cards.GetRange(0, N).OrderBy(card => card.cardName).ToList();
-            cards.RemoveRange(0, N);
+            fewCards = Cards.GetRange(0, N).OrderBy(card => card.cardName).ToList();
+            Cards.RemoveRange(0, N);
             return fewCards;
         }
     }

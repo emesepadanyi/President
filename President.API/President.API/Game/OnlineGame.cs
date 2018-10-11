@@ -1,4 +1,5 @@
 ﻿using President.API.Dtos;
+using System;
 using System.Collections.Generic;
 
 namespace President.API.Game
@@ -6,19 +7,19 @@ namespace President.API.Game
 
     public class OnlineGame
     {
-       private List<string> orderOfPlayers { get; }
+        private List<string> OrderOfPlayers { get; }
         private Dictionary<string, Game.Hand> Hands { get; } = new Dictionary<string, Game.Hand>();
-
+        private List<Card> ThrownCards { get; } = new List<Card>();
 
         public OnlineGame(string[] playerIds)
         {
             Deck deck = new Deck();
             foreach (var player in playerIds)
             {
-                Hands.Add(player, new Game.Hand(deck.dealNCards(13)));
+                Hands.Add(player, new Game.Hand(deck.DealNCards(13)));
             }
 
-            orderOfPlayers = new List<string>(playerIds);
+            OrderOfPlayers = new List<string>(playerIds);
         }
 
         public List<CardDto> Cards(string playerId)
@@ -29,6 +30,11 @@ namespace President.API.Game
                 cards.Add(new CardDto(card));
             }
             return cards;
+        }
+
+        public List<string> Players()
+        {
+            return this.OrderOfPlayers;
         }
 
         public List<ViewModels.Hand> HandStatus(string playerId)
@@ -51,12 +57,40 @@ namespace President.API.Game
             return handStatus;
         }
 
-        public string getNextUser()
+        public string GetNextUser()
         {
-            var user = this.orderOfPlayers[0];
-            this.orderOfPlayers.RemoveAt(0);
-            this.orderOfPlayers.Add(user);
+            var user = this.OrderOfPlayers[0];
+            this.OrderOfPlayers.RemoveAt(0);
+            this.OrderOfPlayers.Add(user);
             return user;
+        }
+
+        public bool IsUserInTheGame(string userName)
+        {
+            if (this.Hands[userName] != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void ThrowCard(string userName, Card card)
+        {
+            ValidateThrowing(userName);
+            
+            this.ThrownCards.Add(GetCardFromUser(userName, card));
+        }
+
+        private Card GetCardFromUser(string userName, Card card)
+        {
+            var theirCard =  Hands[userName].Cards.Find(TheirCard => (TheirCard.suit == card.suit && TheirCard.cardName == card.cardName));
+            Hands[userName].Cards.Remove(theirCard);
+            return theirCard;
+        }
+
+        private void ValidateThrowing(string userName)
+        {
+            if (this.OrderOfPlayers[this.OrderOfPlayers.Count-1] != userName) throw new System.Exception("User is not available to throw a card.");
         }
     }
 }

@@ -11,6 +11,7 @@ using President.API.ViewModels;
 using President.DAL.Context;
 using President.DAL.Entities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -26,7 +27,7 @@ namespace President.API.Controllers
         private readonly PresidentDbContext _appDbContext;
         private IHubContext<GameHub, IGameHub> gameContext;
 
-        private List<OnlineGame> Games { get; } = new List<OnlineGame>();
+        private static readonly ConcurrentBag<OnlineGame> Games = new ConcurrentBag<OnlineGame>();
 
         public GameController(
             UserManager<User> userManager,
@@ -42,7 +43,7 @@ namespace President.API.Controllers
         [HttpPost]
         public async Task<string> PostAsync([FromBody]string[] userIDs)
         {
-            var user = await getUserAsync();
+            var user = await GetUserAsync();
 
             //check if the enemies are valid & online & not in other game!!!
 
@@ -53,7 +54,7 @@ namespace President.API.Controllers
             string retMessage = string.Empty;
             try
             {
-                var nextUser = game.getNextUser();
+                var nextUser = game.GetNextUser();
                 foreach (var userId in userIDs)
                 {
                     await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser });
@@ -66,8 +67,38 @@ namespace President.API.Controllers
             }
             return retMessage;
         }
-        
-        private async Task<User> getUserAsync()
+
+        [HttpPost("card")]
+        public async Task<string> ThrowCardAsync([FromBody]CardDto cardDto)
+        {
+            var user = await GetUserAsync();
+            var card = new Card() { cardName = cardDto.name.ToCardNameEnum(), suit = Enum.Parse<Suit>(cardDto.suit) };
+
+            string retMessage = string.Empty;
+            try
+            {
+                var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
+
+                game.ThrowCard(user.UserName, card);
+                //check if everyone is still online
+
+                //pass to the other users that the card was thrown + who is next
+                var nextUser = game.GetNextUser();
+                foreach (var userId in game.Players())
+                {
+                    await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
+                }
+                retMessage = "Success";
+
+            }
+            catch (Exception e)
+            {
+                retMessage = e.ToString();
+            }
+            return retMessage;
+        }
+
+        private async Task<User> GetUserAsync()
         {
             var userID = _caller.Claims.Single(c => c.Type == "id");
             var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userID.Value);
