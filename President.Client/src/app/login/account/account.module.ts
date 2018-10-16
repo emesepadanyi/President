@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule }  from '@angular/forms';
-import { SharedModule }   from '../modules/shared.module';
+import { SharedModule }   from '../../modules/shared.module';
  
 import { UserService }  from '../services/user.service';
 
-import { EmailValidator } from '../directives/email.validator.directive';
+import { EmailValidator } from '../../directives/email.validator.directive';
 
 import { routing }  from './account.routing';
 import { RegistrationFormComponent } from './registration-form/registration-form.component';

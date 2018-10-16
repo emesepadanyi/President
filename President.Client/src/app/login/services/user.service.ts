@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
 
 import { UserRegistration } from '../models/user.registration.interface';
 import { ConfigService } from '../../services/config.service';
 
-import {BaseService} from "./base.service";
+import {BaseService} from "../../services/base.service";
 
 import { Observable } from 'rxjs/Rx';
 import { BehaviorSubject } from 'rxjs/Rx'; 

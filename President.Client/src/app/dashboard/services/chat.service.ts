@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
 
-@Injectable()
-export class ChatService {
+import { BaseService } from '../../services/base.service';
 
-  constructor() { }
+@Injectable()
+export class ChatService extends BaseService{
+
+  constructor() { 
+    super();
+  }
 
 }

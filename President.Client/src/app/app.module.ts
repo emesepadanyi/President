@@ -8,7 +8,7 @@ import { routing } from './app.routing';
 
 /* App Root */
 import { AppComponent } from './app.component';
-import { HomeComponent } from './login/home/home.component';
+import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 
 /* Account Imports */

@@ -4,7 +4,7 @@ import { Http, Headers } from '@angular/http';
 import { HomeDetails } from '../models/home.details.interface';
 import { ConfigService } from '../../services/config.service';
 
-import { BaseService } from '../../login/services/base.service';
+import { BaseService } from '../../services/base.service';
 
 import { Observable } from 'rxjs/Rx';
 
