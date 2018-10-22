@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using President.API.Dtos;
 using President.API.Game;
+using President.API.Helpers;
 using President.API.Hubs;
 using President.API.ViewModels;
 using President.DAL.Context;
@@ -69,12 +70,11 @@ namespace President.API.Controllers
         }
 
         [HttpPost("card")]
-        public async Task<string> ThrowCardAsync([FromBody]CardDto cardDto)
+        public async Task<IActionResult> ThrowCardAsync([FromBody]CardDto cardDto)
         {
             var user = await GetUserAsync();
             var card = new Card() { CardName = cardDto.name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) };
 
-            string retMessage = string.Empty;
             try
             {
                 var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
@@ -87,14 +87,12 @@ namespace President.API.Controllers
                 {
                     await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
                 }
-                retMessage = "Success";
-
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                retMessage = e.ToString();
+                return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", "User cannot throw this card", ModelState));
             }
-            return retMessage;
+            return new OkObjectResult("Card thrown");
         }
 
         private async Task<User> GetUserAsync()

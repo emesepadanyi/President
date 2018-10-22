@@ -10,7 +10,7 @@ namespace President.API.Game
         public bool IsValidMove(Card AtTop, Card FromHand)
         {
             if (AtTop == null) return true;
-            return (AtTop.CardName <= FromHand.CardName) ? true : false;
+            return (AtTop.CardName < FromHand.CardName) ? true : false;
         }
     }
 }
