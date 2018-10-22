@@ -82,10 +82,22 @@ namespace President.API.Controllers
                 game.ThrowCard(user.UserName, card);
                 //check if everyone is still online
 
-                var nextUser = game.GetNextUser();
+                //this will be moved into game.GetNextUser()
+                var nextUser = game.IsGameStuck() ? user.UserName : game.GetNextUser();
+
                 foreach (var userId in game.Players())
                 {
                     await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
+                }
+
+                if (game.IsGameStuck())
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    game.ResetThrowingDeck();
+                    foreach (var userId in game.Players())
+                    {
+                        await gameContext.Clients.User(userId).ResetDeck(nextUser);
+                    }
                 }
             }
             catch (Exception)

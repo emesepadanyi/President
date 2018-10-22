@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HubConnection } from '@aspnet/signalr';
 import signalR = require('@aspnet/signalr');
 
@@ -13,7 +13,7 @@ import { GameService } from '../services/game.service';
   templateUrl: './gameroom.component.html',
   styleUrls: ['./gameroom.component.scss', './card.css']
 })
-export class GameroomComponent implements OnInit {
+export class GameroomComponent implements OnInit, OnDestroy {
   private _hubConnection: HubConnection;
   private hand : Card[];
   private deck : Card[] = new Array<Card>();
@@ -48,6 +48,12 @@ export class GameroomComponent implements OnInit {
       this.enemyHands = moveStatus.hands;
       this.nextUser = moveStatus.nextUser;
       this.deck.push(moveStatus.movedCard);
+    });
+
+    this._hubConnection.on('ResetDeck', (nextUser: string) => {
+      console.log("reset deck", nextUser);
+      this.nextUser = nextUser;
+      this.deck = new Array<Card>();
     });
   }
 

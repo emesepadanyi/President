@@ -8,5 +8,6 @@ namespace President.API.Game
     public interface IGameLogic
     {
         bool IsValidMove(Card AtTop, Card FromHand);
+        bool IsGameStuck(Card AtTop);
     }
 }

@@ -97,5 +97,15 @@ namespace President.API.Game
             if (this.OrderOfPlayers[this.OrderOfPlayers.Count-1] != userName) throw new System.Exception("User is not available to throw a card.");
             if (this.ThrownCards.Count != 0 && !this.GameLogic.IsValidMove(this.ThrownCards[0], card)) throw new System.Exception("User is not available to throw this card.");
         }
+
+        public bool IsGameStuck()
+        {
+            return this.GameLogic.IsGameStuck(this.ThrownCards[0]);
+        }
+
+        public void ResetThrowingDeck()
+        {
+            this.ThrownCards.Clear();
+        }
     }
 }

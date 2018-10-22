@@ -7,6 +7,11 @@ namespace President.API.Game
 {
     public class DefaultGameLogic : IGameLogic
     {
+        public bool IsGameStuck(Card AtTop)
+        {
+            return (AtTop.CardName == CardNames.ace) ? true : false;
+        }
+
         public bool IsValidMove(Card AtTop, Card FromHand)
         {
             if (AtTop == null) return true;
