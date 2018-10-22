@@ -72,7 +72,7 @@ namespace President.API.Controllers
         public async Task<string> ThrowCardAsync([FromBody]CardDto cardDto)
         {
             var user = await GetUserAsync();
-            var card = new Card() { cardName = cardDto.name.ToCardNameEnum(), suit = Enum.Parse<Suit>(cardDto.suit) };
+            var card = new Card() { CardName = cardDto.name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) };
 
             string retMessage = string.Empty;
             try

@@ -83,7 +83,7 @@ namespace President.API.Game
 
         private Card GetCardFromUser(string userName, Card card)
         {
-            var theirCard =  Hands[userName].Cards.Find(TheirCard => (TheirCard.suit == card.suit && TheirCard.cardName == card.cardName));
+            var theirCard =  Hands[userName].Cards.Find(TheirCard => (TheirCard.Suit == card.Suit && TheirCard.CardName == card.CardName));
             Hands[userName].Cards.Remove(theirCard);
             return theirCard;
         }

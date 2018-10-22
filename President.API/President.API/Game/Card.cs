@@ -7,8 +7,8 @@ namespace President.API.Game
 {
     public class Card
     {
-        public Suit suit { get; set; }
-        public CardNames cardName { get; set; }
+        public Suit Suit { get; set; }
+        public CardNames CardName { get; set; }
     }
 
     public enum Suit

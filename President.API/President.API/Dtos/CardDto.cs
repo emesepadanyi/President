@@ -13,8 +13,8 @@ namespace President.API.Dtos
 
         public CardDto(Card card)
         {
-            suit = card.suit.ToString();
-            name = card.cardName.ToCardString();
+            suit = card.Suit.ToString();
+            name = card.CardName.ToCardString();
         }
 
         public CardDto() { }

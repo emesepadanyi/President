@@ -15,7 +15,7 @@ namespace President.API.Game
             {
                 foreach (CardNames name in Enum.GetValues(typeof(CardNames)))
                 {
-                    Cards.Add(new Card { cardName = name, suit = suit });
+                    Cards.Add(new Card { CardName = name, Suit = suit });
                 }
             }
 
@@ -37,7 +37,7 @@ namespace President.API.Game
         public List<Card> DealNCards(int N)
         {
             List<Card> fewCards = new List<Card>(N);
-            fewCards = Cards.GetRange(0, N).OrderBy(card => card.cardName).ToList();
+            fewCards = Cards.GetRange(0, N).OrderBy(card => card.CardName).ToList();
             Cards.RemoveRange(0, N);
             return fewCards;
         }
