@@ -11,8 +11,12 @@ namespace President.API.Game
         private Dictionary<string, Game.Hand> Hands { get; } = new Dictionary<string, Game.Hand>();
         private List<Card> ThrownCards { get; } = new List<Card>();
 
+        private IGameLogic GameLogic { get; }
+
         public OnlineGame(string[] playerIds)
         {
+            GameLogic = new DefaultGameLogic();
+
             Deck deck = new Deck();
             foreach (var player in playerIds)
             {
@@ -76,9 +80,9 @@ namespace President.API.Game
 
         public void ThrowCard(string userName, Card card)
         {
-            ValidateThrowing(userName);
+            ValidateThrowing(userName, card);
             
-            this.ThrownCards.Add(GetCardFromUser(userName, card));
+            this.ThrownCards.Insert(0, GetCardFromUser(userName, card));
         }
 
         private Card GetCardFromUser(string userName, Card card)
@@ -88,9 +92,10 @@ namespace President.API.Game
             return theirCard;
         }
 
-        private void ValidateThrowing(string userName)
+        private void ValidateThrowing(string userName, Card card)
         {
             if (this.OrderOfPlayers[this.OrderOfPlayers.Count-1] != userName) throw new System.Exception("User is not available to throw a card.");
+            if (this.ThrownCards.Count != 0 && !this.GameLogic.IsValidMove(this.ThrownCards[0], card)) throw new System.Exception("User is not available to throw this card.");
         }
     }
 }

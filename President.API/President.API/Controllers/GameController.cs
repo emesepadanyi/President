@@ -82,7 +82,6 @@ namespace President.API.Controllers
                 game.ThrowCard(user.UserName, card);
                 //check if everyone is still online
 
-                //pass to the other users that the card was thrown + who is next
                 var nextUser = game.GetNextUser();
                 foreach (var userId in game.Players())
                 {
