@@ -21,7 +21,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private nextUser: string;
   private user: string;
 
-  constructor(private gameSetvice: GameService) { }
+  constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
     let authToken = localStorage.getItem('auth_token');
@@ -47,7 +47,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
       this.hand = moveStatus.cards;
       this.enemyHands = moveStatus.hands;
       this.nextUser = moveStatus.nextUser;
-      this.deck.push(moveStatus.movedCard);
+      if (!!moveStatus.movedCard) { this.deck.push(moveStatus.movedCard); }
     });
 
     this._hubConnection.on('ResetDeck', (nextUser: string) => {
@@ -66,7 +66,19 @@ export class GameroomComponent implements OnInit, OnDestroy {
   }
 
   clickedOn(card: Card) {
-    this.gameSetvice.sendCard(card)
+    this.gameService.sendCard(card)
       .subscribe(() => { });
+  }
+
+  pass(): void{
+    this.gameService.pass()
+      .subscribe(() => { });
+  }
+
+  ngOnDestroy(): void {
+    this._hubConnection.off("StartGame");
+    this._hubConnection.off("PutCard");
+    this._hubConnection.off("ResetDeck");
+    this._hubConnection.stop();
   }
 }

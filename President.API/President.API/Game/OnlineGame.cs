@@ -63,9 +63,13 @@ namespace President.API.Game
 
         public string GetNextUser()
         {
-            var user = this.OrderOfPlayers[0];
-            this.OrderOfPlayers.RemoveAt(0);
-            this.OrderOfPlayers.Add(user);
+            string user = null;
+            while (user == null || !Hands[user].Active)
+            {
+                user = this.OrderOfPlayers[0];
+                this.OrderOfPlayers.RemoveAt(0);
+                this.OrderOfPlayers.Add(user);
+            }
             return user;
         }
 
@@ -94,8 +98,25 @@ namespace President.API.Game
 
         private void ValidateThrowing(string userName, Card card)
         {
-            if (this.OrderOfPlayers[this.OrderOfPlayers.Count-1] != userName) throw new System.Exception("User is not available to throw a card.");
-            if (this.ThrownCards.Count != 0 && !this.GameLogic.IsValidMove(this.ThrownCards[0], card)) throw new System.Exception("User is not available to throw this card.");
+            if (this.OrderOfPlayers[this.OrderOfPlayers.Count-1] != userName) throw new System.Exception("Not your turn!");
+            if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
+            if (this.ThrownCards.Count != 0 && !this.GameLogic.IsValidMove(this.ThrownCards[0], card)) throw new System.Exception("You don't own this card!");
+        }
+
+        public void Pass(string userName)
+        {
+            ValidatePassing(userName);
+            SetUserInactive(userName);
+        }
+
+        private void ValidatePassing(string userName)
+        {
+            if (this.OrderOfPlayers[this.OrderOfPlayers.Count - 1] != userName) throw new System.Exception("Not your turn!");
+            if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
+        }
+        private void SetUserInactive(string userName)
+        {
+            this.Hands[userName].Active = false;
         }
 
         public bool IsGameStuck()

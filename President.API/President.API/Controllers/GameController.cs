@@ -82,23 +82,7 @@ namespace President.API.Controllers
                 game.ThrowCard(user.UserName, card);
                 //check if everyone is still online
 
-                //this will be moved into game.GetNextUser()
-                var nextUser = game.IsGameStuck() ? user.UserName : game.GetNextUser();
-
-                foreach (var userId in game.Players())
-                {
-                    await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
-                }
-
-                if (game.IsGameStuck())
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    game.ResetThrowingDeck();
-                    foreach (var userId in game.Players())
-                    {
-                        await gameContext.Clients.User(userId).ResetDeck(nextUser);
-                    }
-                }
+                await NotifyUsers(cardDto, user, game);
             }
             catch (Exception)
             {
@@ -107,11 +91,52 @@ namespace President.API.Controllers
             return new OkObjectResult("Card thrown");
         }
 
+        [HttpPost("pass")]
+        public async Task<IActionResult> PassAsync()
+        {
+            var user = await GetUserAsync();
+
+            try
+            {
+                var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
+
+                game.Pass(user.UserName);
+
+                await NotifyUsers(null, user, game);
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", e.Message , ModelState));
+            }
+            return new OkObjectResult("User passed");
+        }
+
         private async Task<User> GetUserAsync()
         {
             var userID = _caller.Claims.Single(c => c.Type == "id");
             var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userID.Value);
             return user;
+        }
+
+        private async Task NotifyUsers(CardDto cardDto, User user, OnlineGame game)
+        {
+            //this will be moved into game.GetNextUser()
+            var nextUser = game.IsGameStuck() ? user.UserName : game.GetNextUser();
+
+            foreach (var userId in game.Players())
+            {
+                await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
+            }
+
+            if (game.IsGameStuck())
+            {
+                System.Threading.Thread.Sleep(1000);
+                game.ResetThrowingDeck();
+                foreach (var userId in game.Players())
+                {
+                    await gameContext.Clients.User(userId).ResetDeck(nextUser);
+                }
+            }
         }
     }
 }

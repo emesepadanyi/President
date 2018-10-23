@@ -8,9 +8,11 @@ namespace President.API.Game
     public class Hand
     {
         public List<Card> Cards { get; }
+        public bool Active { get; set; }
         public Hand(List<Card> cards)
         {
             Cards = cards;
+            Active = true;
         }
     }
 }

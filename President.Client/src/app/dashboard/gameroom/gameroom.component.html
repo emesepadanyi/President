@@ -7,11 +7,8 @@
   </div>
   <div class="ownHand playingCards faceImages rotateHand">
     <ul class="hand">
-      <li *ngFor = "let card of hand" 
-        class = "card rank-{{card.name | lowercase}} {{card.suit}}" 
-        [class.activePlayer] = "isActivePlayer(user)" 
-        (click) = "isActivePlayer(user) && clickedOn(card)">
-
+      <li *ngFor="let card of hand" class="card rank-{{card.name | lowercase}} {{card.suit}}" [class.activePlayer]="isActivePlayer(user)"
+        (click)="isActivePlayer(user) && clickedOn(card)">
         <span class="rank">{{card.name}}</span>
         <div ngSwitch="{{card.suit}}">
           <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
@@ -22,17 +19,22 @@
       </li>
     </ul>
   </div>
-  <div class ="throwing_deck playingCards faceImages">
-    <ul class = "deck">
-        <li *ngFor="let card of deck" class="card rank-{{card.name | lowercase}} {{card.suit}}" (click)="clickedOn(card)">
-            <span class="rank">{{card.name}}</span>
-            <div ngSwitch="{{card.suit}}">
-              <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
-              <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
-              <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
-              <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
-            </div>
-        </li>
+    <div class="passButton">
+      <button type="button" class="btn btn-warning" [class.invisible]="!isActivePlayer(user)" [attr.disabled]="isActivePlayer(user)? null:true" (click)="pass()">
+        Pass
+      </button>
+    </div>
+  <div class="throwing_deck playingCards faceImages">
+    <ul class="deck">
+      <li *ngFor="let card of deck" class="card rank-{{card.name | lowercase}} {{card.suit}}" (click)="clickedOn(card)">
+        <span class="rank">{{card.name}}</span>
+        <div ngSwitch="{{card.suit}}">
+          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+        </div>
+      </li>
     </ul>
   </div>
 </div>
