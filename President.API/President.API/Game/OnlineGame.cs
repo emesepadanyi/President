@@ -1,6 +1,6 @@
 ﻿using President.API.Dtos;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace President.API.Game
 {
@@ -8,7 +8,7 @@ namespace President.API.Game
     public class OnlineGame
     {
         private List<string> OrderOfPlayers { get; }
-        private Dictionary<string, Game.Hand> Hands { get; } = new Dictionary<string, Game.Hand>();
+        private Dictionary<string, Hand> Hands { get; } = new Dictionary<string, Hand>();
         private List<Card> ThrownCards { get; } = new List<Card>();
 
         private IGameLogic GameLogic { get; }
@@ -36,10 +36,7 @@ namespace President.API.Game
             return cards;
         }
 
-        public List<string> Players()
-        {
-            return this.OrderOfPlayers;
-        }
+        public List<string> Players() => OrderOfPlayers;
 
         public List<ViewModels.Hand> HandStatus(string playerId)
         {
@@ -64,29 +61,23 @@ namespace President.API.Game
         public string GetNextUser()
         {
             string user = null;
-            while (user == null || !Hands[user].Active)
+            if (IsGameStuck()) user = OrderOfPlayers[OrderOfPlayers.Count - 1]; // if the game is stuck than it can be the last person who put the card or passed
+            while (user == null || !Hands[user].Active) // if the person put a card, than that person should be up, otherwise the only one who is still active
             {
-                user = this.OrderOfPlayers[0];
-                this.OrderOfPlayers.RemoveAt(0);
-                this.OrderOfPlayers.Add(user);
+                user = OrderOfPlayers[0];
+                OrderOfPlayers.RemoveAt(0);
+                OrderOfPlayers.Add(user);
             }
             return user;
         }
 
-        public bool IsUserInTheGame(string userName)
-        {
-            if (this.Hands[userName] != null)
-            {
-                return true;
-            }
-            return false;
-        }
+        public bool IsUserInTheGame(string userName) => (Hands[userName] != null);
 
         public void ThrowCard(string userName, Card card)
         {
             ValidateThrowing(userName, card);
             
-            this.ThrownCards.Insert(0, GetCardFromUser(userName, card));
+            ThrownCards.Insert(0, GetCardFromUser(userName, card));
         }
 
         private Card GetCardFromUser(string userName, Card card)
@@ -98,9 +89,9 @@ namespace President.API.Game
 
         private void ValidateThrowing(string userName, Card card)
         {
-            if (this.OrderOfPlayers[this.OrderOfPlayers.Count-1] != userName) throw new System.Exception("Not your turn!");
+            if (OrderOfPlayers[OrderOfPlayers.Count-1] != userName) throw new System.Exception("Not your turn!");
             if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
-            if (this.ThrownCards.Count != 0 && !this.GameLogic.IsValidMove(this.ThrownCards[0], card)) throw new System.Exception("You don't own this card!");
+            if (ThrownCards.Count != 0 && !GameLogic.IsValidMove(ThrownCards[0], card)) throw new System.Exception("You don't own this card!");
         }
 
         public void Pass(string userName)
@@ -111,22 +102,15 @@ namespace President.API.Game
 
         private void ValidatePassing(string userName)
         {
-            if (this.OrderOfPlayers[this.OrderOfPlayers.Count - 1] != userName) throw new System.Exception("Not your turn!");
+            if (OrderOfPlayers[this.OrderOfPlayers.Count - 1] != userName) throw new System.Exception("Not your turn!");
             if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
         }
-        private void SetUserInactive(string userName)
-        {
-            this.Hands[userName].Active = false;
-        }
+        private void SetUserInactive(string userName) => Hands[userName].Active = false;
 
-        public bool IsGameStuck()
-        {
-            return this.GameLogic.IsGameStuck(this.ThrownCards[0]);
-        }
+        public bool IsGameStuck() => GameLogic.IsGameStuck(ThrownCards.Count != 0 ? ThrownCards[0] : null, Hands);
 
-        public void ResetThrowingDeck()
-        {
-            this.ThrownCards.Clear();
-        }
+        public void ResetThrowingDeck() => ThrownCards.Clear();
+
+        public void ResetActivity() => Hands.ToList().ForEach(action: hand => { hand.Value.Active = true; });
     }
 }

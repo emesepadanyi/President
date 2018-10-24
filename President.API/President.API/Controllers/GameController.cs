@@ -13,7 +13,6 @@ using President.DAL.Context;
 using President.DAL.Entities;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -120,8 +119,7 @@ namespace President.API.Controllers
 
         private async Task NotifyUsers(CardDto cardDto, User user, OnlineGame game)
         {
-            //this will be moved into game.GetNextUser()
-            var nextUser = game.IsGameStuck() ? user.UserName : game.GetNextUser();
+            var nextUser = game.GetNextUser();
 
             foreach (var userId in game.Players())
             {
@@ -136,6 +134,7 @@ namespace President.API.Controllers
                 {
                     await gameContext.Clients.User(userId).ResetDeck(nextUser);
                 }
+                game.ResetActivity();
             }
         }
     }

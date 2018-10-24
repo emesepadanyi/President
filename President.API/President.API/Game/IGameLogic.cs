@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace President.API.Game
 {
     public interface IGameLogic
     {
         bool IsValidMove(Card AtTop, Card FromHand);
-        bool IsGameStuck(Card AtTop);
+        bool IsGameStuck(Card AtTop, Dictionary<string, Game.Hand> Hands);
     }
 }

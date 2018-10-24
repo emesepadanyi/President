@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace President.API.Game
 {
     public class DefaultGameLogic : IGameLogic
     {
-        public bool IsGameStuck(Card AtTop)
+        public bool IsGameStuck(Card AtTop, Dictionary<string, Game.Hand> Hands)
         {
-            return (AtTop.CardName == CardNames.ace) ? true : false;
+            if (AtTop != null && AtTop.CardName == CardNames.ace) return true; // if the top card is ace
+            if (Hands.Where(hand => hand.Value.Active).Count() == 1) return true; // if all except one person passed
+
+            return false; // else game is not stuck
         }
 
         public bool IsValidMove(Card AtTop, Card FromHand)
