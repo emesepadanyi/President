@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using President.API.Dtos;
 using President.API.Game;
 using President.API.Helpers;
@@ -23,28 +21,33 @@ namespace President.API.Controllers
     [Route("api/[controller]")]
     public class GameController : Controller
     {
-        private readonly ClaimsPrincipal _caller;
-        private readonly PresidentDbContext _appDbContext;
+        private readonly User user;
+        private readonly PresidentDbContext presidentDbContext;
         private IHubContext<GameHub, IGameHub> gameContext;
 
         private static readonly ConcurrentBag<OnlineGame> Games = new ConcurrentBag<OnlineGame>();
 
         public GameController(
-            UserManager<User> userManager,
             IHttpContextAccessor httpContextAccessor,
-            PresidentDbContext appDbContext,
-            IHubContext<GameHub, IGameHub> hubContext)
+            PresidentDbContext _presidentDbContext,
+            IHubContext<GameHub, IGameHub> _gameContext)
         {
-            _caller = httpContextAccessor.HttpContext.User;
-            _appDbContext = appDbContext;
-            gameContext = hubContext;
+            presidentDbContext = _presidentDbContext;
+            gameContext = _gameContext;
+
+            ClaimsPrincipal caller = httpContextAccessor.HttpContext.User;
+            user = GetUser(caller);
+        }
+        private User GetUser(ClaimsPrincipal caller)
+        {
+            var userID = caller.Claims.Single(c => c.Type == "id");
+            var user = presidentDbContext.Users.Single(dbUser => dbUser.Id == userID.Value);
+            return user;
         }
 
         [HttpPost]
         public async Task<string> PostAsync([FromBody]string[] userIDs)
         {
-            var user = await GetUserAsync();
-
             //check if the enemies are valid & online & not in other game!!!
 
             OnlineGame game = new OnlineGame(userIDs);
@@ -71,11 +74,10 @@ namespace President.API.Controllers
         [HttpPost("card")]
         public async Task<IActionResult> ThrowCardAsync([FromBody]CardDto cardDto)
         {
-            var user = await GetUserAsync();
-            var card = new Card() { CardName = cardDto.name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) };
-
             try
             {
+                var card = new Card() { CardName = cardDto.name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) };
+
                 var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
 
                 game.ThrowCard(user.UserName, card);
@@ -93,8 +95,6 @@ namespace President.API.Controllers
         [HttpPost("pass")]
         public async Task<IActionResult> PassAsync()
         {
-            var user = await GetUserAsync();
-
             try
             {
                 var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
@@ -108,13 +108,6 @@ namespace President.API.Controllers
                 return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", e.Message , ModelState));
             }
             return new OkObjectResult("User passed");
-        }
-
-        private async Task<User> GetUserAsync()
-        {
-            var userID = _caller.Claims.Single(c => c.Type == "id");
-            var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userID.Value);
-            return user;
         }
 
         private async Task NotifyUsers(CardDto cardDto, User user, OnlineGame game)
