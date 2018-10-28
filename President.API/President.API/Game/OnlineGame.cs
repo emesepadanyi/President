@@ -82,12 +82,7 @@ namespace President.API.Game
             
             ThrownCards.Insert(0, GetCardFromUser(userName, card));
 
-            if (Hands[userName].Cards.Count == 0)
-            {
-                //todo give better rank
-                Hands[userName].Rank = Rank.President;
-                SetUserInactive(userName);
-            }
+            if (Hands[userName].Cards.Count == 0) GameLogic.GiveRank(Hands, userName);
         }
 
         private Card GetCardFromUser(string userName, Card card)

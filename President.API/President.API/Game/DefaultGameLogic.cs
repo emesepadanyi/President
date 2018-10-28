@@ -5,6 +5,30 @@ namespace President.API.Game
 {
     public class DefaultGameLogic : IGameLogic
     {
+        public void GiveRank(Dictionary<string, Hand> hands, string userName)
+        {
+            int allUsers = hands.Count;
+            int finishedUsers = hands.Where((hand) => hand.Value.Cards.Count == 0).Count();
+            switch (finishedUsers)
+            {
+                case (0):
+                    return;
+                case (1):
+                    hands[userName].Rank = Rank.President;
+                    break;
+                case (2):
+                    hands[userName].Rank = Rank.VicePresident;
+                    break;
+                default:
+                    if(finishedUsers == allUsers - 1)
+                        hands[userName].Rank = Rank.ViceScum;
+                    else
+                        hands[userName].Rank = Rank.AverageJoe;
+                    break;
+            }
+            hands[userName].Active = false;
+        }
+
         public bool IsGameStuck(Card AtTop, Dictionary<string, Game.Hand> Hands)
         {
             if (AtTop != null && AtTop.CardName == CardNames.ace) return true; // if the top card is ace
