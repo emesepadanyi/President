@@ -9,10 +9,21 @@ namespace President.API.Game
     {
         public List<Card> Cards { get; }
         public bool Active { get; set; }
+        public Rank Rank { get; set; }
         public Hand(List<Card> cards)
         {
             Cards = cards;
             Active = true;
+            Rank = Rank.AverageJoe;
         }
+    }
+
+    public enum Rank
+    {
+        Scum,
+        ViceScum,
+        AverageJoe,
+        VicePresident,
+        President
     }
 }

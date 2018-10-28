@@ -46,29 +46,26 @@ namespace President.API.Controllers
         }
 
         [HttpPost]
-        public async Task<string> PostAsync([FromBody]string[] userIDs)
+        public async Task<IActionResult> PostAsync([FromBody]string[] userIDs)
         {
-            //check if the enemies are valid & online & not in other game!!!
-
-            OnlineGame game = new OnlineGame(userIDs);
-
-            Games.Add(game);
-
-            string retMessage = string.Empty;
             try
             {
+                //check if the enemies are valid & online & not in other game
+
+                OnlineGame game = new OnlineGame(userIDs);
+                Games.Add(game);
+
                 var nextUser = game.GetNextUser();
                 foreach (var userId in userIDs)
                 {
-                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser });
+                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser });
                 }
-                retMessage = "Success";
             }
             catch (Exception e)
             {
-                retMessage = e.ToString();
+                return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", e.Message, ModelState));
             }
-            return retMessage;
+            return new OkObjectResult("Game started");
         }
 
         [HttpPost("card")]
@@ -76,18 +73,20 @@ namespace President.API.Controllers
         {
             try
             {
+
+                //check if everyone is still online
+
                 var card = new Card() { CardName = cardDto.name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) };
 
                 var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
 
                 game.ThrowCard(user.UserName, card);
-                //check if everyone is still online
 
                 await NotifyUsers(cardDto, user, game);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", "User cannot throw this card", ModelState));
+                return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", e.Message, ModelState));
             }
             return new OkObjectResult("Card thrown");
         }
@@ -97,6 +96,9 @@ namespace President.API.Controllers
         {
             try
             {
+
+                //check if everyone is still online
+
                 var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
 
                 game.Pass(user.UserName);
@@ -116,7 +118,7 @@ namespace President.API.Controllers
 
             foreach (var userId in game.Players())
             {
-                await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
+                await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
             }
 
             if (game.IsGameStuck())

@@ -1,4 +1,5 @@
 ﻿using President.API.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -44,7 +45,7 @@ namespace President.API.Game
 
             foreach (var hand in Hands)
             {
-                handStatus.Add(new ViewModels.Hand() { UserName = hand.Key, NoCards = hand.Value.Cards.Count});
+                handStatus.Add(new ViewModels.Hand() { UserName = hand.Key, NoCards = hand.Value.Cards.Count, Rank = hand.Value.Rank.ToString()});
             }
 
             while(handStatus[0].UserName != playerId)
@@ -71,6 +72,8 @@ namespace President.API.Game
             return user;
         }
 
+        internal string GetRank(string userId) => Hands[userId].Rank.ToString();
+
         public bool IsUserInTheGame(string userName) => (Hands[userName] != null);
 
         public void ThrowCard(string userName, Card card)
@@ -78,6 +81,13 @@ namespace President.API.Game
             ValidateThrowing(userName, card);
             
             ThrownCards.Insert(0, GetCardFromUser(userName, card));
+
+            if (Hands[userName].Cards.Count == 0)
+            {
+                //todo give better rank
+                Hands[userName].Rank = Rank.President;
+                SetUserInactive(userName);
+            }
         }
 
         private Card GetCardFromUser(string userName, Card card)
@@ -111,6 +121,6 @@ namespace President.API.Game
 
         public void ResetThrowingDeck() => ThrownCards.Clear();
 
-        public void ResetActivity() => Hands.ToList().ForEach(action: hand => { hand.Value.Active = true; });
+        public void ResetActivity() => Hands.ToList().ForEach(action: hand => { if(hand.Value.Cards.Count != 0) hand.Value.Active = true; });
     }
 }
