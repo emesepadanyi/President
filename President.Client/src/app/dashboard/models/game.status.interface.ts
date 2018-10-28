@@ -3,6 +3,7 @@ import { Hand } from "./hand.interface";
 
 export interface GameStatus{
     cards: Card[];
+    ownRank: string;
     hands: Hand[];
     nextUser: string;
 }

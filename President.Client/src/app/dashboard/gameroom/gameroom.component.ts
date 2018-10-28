@@ -20,6 +20,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private enemyHands: Hand[];
   private nextUser: string;
   private user: string;
+  private ownRank: string;
 
   constructor(private gameService: GameService) { }
 
@@ -37,6 +38,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
       .catch(err => console.log('Error while establishing connection :('));
 
     this._hubConnection.on('StartGame', (gameStatus: GameStatus) => {
+      this.ownRank = gameStatus.ownRank;
       this.hand = gameStatus.cards;
       this.enemyHands = gameStatus.hands;
       this.nextUser = gameStatus.nextUser;
@@ -44,6 +46,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
 
     this._hubConnection.on('PutCard', (moveStatus: MoveStatus) => {
       console.log(moveStatus);
+      this.ownRank = moveStatus.ownRank;
       this.hand = moveStatus.cards;
       this.enemyHands = moveStatus.hands;
       this.nextUser = moveStatus.nextUser;
