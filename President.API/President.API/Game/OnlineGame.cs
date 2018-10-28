@@ -18,13 +18,23 @@ namespace President.API.Game
         {
             GameLogic = new DefaultGameLogic();
 
-            Deck deck = new Deck();
             foreach (var player in playerIds)
             {
-                Hands.Add(player, new Game.Hand(deck.DealNCards(13)));
+                Hands.Add(player, new Hand(null));
             }
 
+            DealCardsForPlayers();
+
             OrderOfPlayers = new List<string>(playerIds);
+        }
+
+        private void DealCardsForPlayers()
+        {
+            Deck deck = new Deck();
+            foreach (var player in Hands)
+            {
+                player.Value.Cards = deck.DealNCards(13);
+            }
         }
 
         public List<CardDto> Cards(string playerId)
@@ -62,13 +72,31 @@ namespace President.API.Game
         public string GetNextUser()
         {
             string user = null;
-            if (IsGameStuck()) user = OrderOfPlayers[OrderOfPlayers.Count - 1]; // if the game is stuck than it can be the last person who put the card or passed
-            while (user == null || !Hands[user].Active) // if the person put a card, than that person should be up, otherwise the only one who is still active
+
+            if (IsRoundOver())
+            {
+                user = Hands.Where(predicate: (hand) => hand.Value.Cards.Count != 0).First().Key;
+                Hands[user].Rank = Rank.Scum;
+                Hands[user].Active = true;
+                while(user != OrderOfPlayers[OrderOfPlayers.Count-1])
+                {
+                    var tempUser = OrderOfPlayers[0];
+                    OrderOfPlayers.RemoveAt(0);
+                    OrderOfPlayers.Add(tempUser);
+                }
+            }
+            else if (IsGameStuck())
+            {
+                user = OrderOfPlayers[OrderOfPlayers.Count - 1];
+            }
+
+            while (user == null || !Hands[user].Active)
             {
                 user = OrderOfPlayers[0];
                 OrderOfPlayers.RemoveAt(0);
                 OrderOfPlayers.Add(user);
             }
+
             return user;
         }
 
@@ -96,7 +124,7 @@ namespace President.API.Game
         {
             if (OrderOfPlayers[OrderOfPlayers.Count-1] != userName) throw new System.Exception("Not your turn!");
             if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
-            if (ThrownCards.Count != 0 && !GameLogic.IsValidMove(ThrownCards[0], card)) throw new System.Exception("You don't own this card!");
+            if (ThrownCards.Count != 0 && !GameLogic.IsValidMove(ThrownCards[0], card)) throw new System.Exception("You have to top the previous card!");
         }
 
         public void Pass(string userName)
@@ -114,8 +142,17 @@ namespace President.API.Game
 
         public bool IsGameStuck() => GameLogic.IsGameStuck(ThrownCards.Count != 0 ? ThrownCards[0] : null, Hands);
 
+        public void PrepareNextRound()
+        {
+            ResetThrowingDeck();
+            DealCardsForPlayers();
+            Hands.ToList().ForEach(action: hand => hand.Value.Active = true);
+        }
+
         public void ResetThrowingDeck() => ThrownCards.Clear();
 
         public void ResetActivity() => Hands.ToList().ForEach(action: hand => { if(hand.Value.Cards.Count != 0) hand.Value.Active = true; });
+
+        internal bool IsRoundOver() => (Hands.Where(predicate: (hand) => hand.Value.Cards.Count != 0).Count() == 1);
     }
 }

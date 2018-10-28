@@ -121,7 +121,17 @@ namespace President.API.Controllers
                 await gameContext.Clients.User(userId).PutCard(new MoveViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser, MovedCard = cardDto });
             }
 
-            if (game.IsGameStuck())
+            if (game.IsRoundOver())
+            {
+                System.Threading.Thread.Sleep(1000);
+                game.PrepareNextRound();
+
+                foreach (var userId in game.Players())
+                {
+                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser });
+                }
+            }
+            else if (game.IsGameStuck())
             {
                 System.Threading.Thread.Sleep(1000);
                 game.ResetThrowingDeck();

@@ -7,7 +7,7 @@ namespace President.API.Game
 {
     public class Hand
     {
-        public List<Card> Cards { get; }
+        public List<Card> Cards { get; set; }
         public bool Active { get; set; }
         public Rank Rank { get; set; }
         public Hand(List<Card> cards)

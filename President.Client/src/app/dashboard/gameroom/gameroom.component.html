@@ -1,10 +1,10 @@
 <div class="gameSpace">
   <div *ngFor='let enemyHand of enemyHands' class="enemyHand playingCards faceImages rotateHand">
-    <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.userName}}</div>
-    <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.rank}}</div>
     <ul class="hand">
       <li *ngFor='let in of counter(enemyHand.noCards) ; let i = index' class="card back">*</li>
     </ul>
+    <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.userName}}</div>
+    <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.rank}}</div>
   </div>
   <div class="ownHand playingCards faceImages rotateHand">
     <div [class.activePlayer]="isActivePlayer(user)">{{user}}</div>

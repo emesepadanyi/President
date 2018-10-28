@@ -38,6 +38,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
       .catch(err => console.log('Error while establishing connection :('));
 
     this._hubConnection.on('StartGame', (gameStatus: GameStatus) => {
+      this.deck = new Array<Card>();
       this.ownRank = gameStatus.ownRank;
       this.hand = gameStatus.cards;
       this.enemyHands = gameStatus.hands;
