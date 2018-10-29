@@ -28,8 +28,6 @@ namespace President.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Home()
         {
-            // retrieve the user info
-            //HttpContext.User
             var userId = _caller.Claims.Single(c => c.Type == "id");
             var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userId.Value);
 
@@ -40,9 +38,6 @@ namespace President.API.Controllers
                 user.LastName,
                 user.PictureUrl,
                 user.FacebookId
-                //, customer.Location,
-                //customer.Locale,
-                //customer.Gender
             });
         }
     }

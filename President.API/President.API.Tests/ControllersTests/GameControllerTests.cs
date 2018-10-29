@@ -58,7 +58,6 @@ namespace President.API.Tests.ControllersTests
 
             return context;
         }
-
         private IHubContext<GameHub, IGameHub> MockGameContext()
         {
            return new Mock<IHubContext<GameHub, IGameHub>>().Object;
