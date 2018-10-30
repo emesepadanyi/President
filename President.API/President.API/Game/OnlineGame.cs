@@ -11,6 +11,7 @@ namespace President.API.Game
         private List<string> OrderOfPlayers { get; }
         private Dictionary<string, Hand> Hands { get; } = new Dictionary<string, Hand>();
         private List<Card> ThrownCards { get; } = new List<Card>();
+        public int Rounds { get; set; } = 1;
 
         private IGameLogic GameLogic { get; }
 
@@ -138,6 +139,7 @@ namespace President.API.Game
             if (OrderOfPlayers[this.OrderOfPlayers.Count - 1] != userName) throw new System.Exception("Not your turn!");
             if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
         }
+
         private void SetUserInactive(string userName) => Hands[userName].Active = false;
 
         public bool IsGameStuck() => GameLogic.IsGameStuck(ThrownCards.Count != 0 ? ThrownCards[0] : null, Hands);
@@ -147,6 +149,7 @@ namespace President.API.Game
             ResetThrowingDeck();
             DealCardsForPlayers();
             Hands.ToList().ForEach(action: hand => hand.Value.Active = true);
+            Rounds++;
         }
 
         public void ResetThrowingDeck() => ThrownCards.Clear();

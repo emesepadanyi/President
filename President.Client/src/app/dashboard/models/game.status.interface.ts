@@ -6,4 +6,5 @@ export interface GameStatus{
     ownRank: string;
     hands: Hand[];
     nextUser: string;
+    round: number;
 }

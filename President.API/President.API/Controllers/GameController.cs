@@ -58,7 +58,7 @@ namespace President.API.Controllers
                 var nextUser = game.GetNextUser();
                 foreach (var userId in userIDs)
                 {
-                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser });
+                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser, Round = game.Rounds });
                 }
             }
             catch (Exception e)

@@ -3,10 +3,10 @@ import { HubConnection } from '@aspnet/signalr';
 import signalR = require('@aspnet/signalr');
 
 import { GameStatus } from '../models/game.status.interface';
-import { Hand }       from '../models/hand.interface';
 import { Card }       from '../models/card.interface';
 import { MoveStatus } from '../models/move.status.interface';
 import { GameService } from '../services/game.service';
+import { Game } from '../models/game';
 
 @Component({
   selector: 'app-gameroom',
@@ -15,12 +15,8 @@ import { GameService } from '../services/game.service';
 })
 export class GameroomComponent implements OnInit, OnDestroy {
   private _hubConnection: HubConnection;
-  private hand : Card[];
-  private deck : Card[] = new Array<Card>();
-  private enemyHands: Hand[];
-  private nextUser: string;
   private user: string;
-  private ownRank: string;
+  private game: Game;
 
   constructor(private gameService: GameService) { }
 
@@ -38,26 +34,19 @@ export class GameroomComponent implements OnInit, OnDestroy {
       .catch(err => console.log('Error while establishing connection :('));
 
     this._hubConnection.on('StartGame', (gameStatus: GameStatus) => {
-      this.deck = new Array<Card>();
-      this.ownRank = gameStatus.ownRank;
-      this.hand = gameStatus.cards;
-      this.enemyHands = gameStatus.hands;
-      this.nextUser = gameStatus.nextUser;
+      if(!this.game) this.game = new Game();
+      this.game.setUp(gameStatus);
     });
 
     this._hubConnection.on('PutCard', (moveStatus: MoveStatus) => {
       console.log(moveStatus);
-      this.ownRank = moveStatus.ownRank;
-      this.hand = moveStatus.cards;
-      this.enemyHands = moveStatus.hands;
-      this.nextUser = moveStatus.nextUser;
-      if (!!moveStatus.movedCard) { this.deck.push(moveStatus.movedCard); }
+      this.game.moveCard(moveStatus);
     });
 
     this._hubConnection.on('ResetDeck', (nextUser: string) => {
       console.log("reset deck", nextUser);
-      this.nextUser = nextUser;
-      this.deck = new Array<Card>();
+      this.game.nextUser = nextUser;
+      this.game.resetDeck();
     });
   }
 
@@ -66,7 +55,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
   }
   
   isActivePlayer(user: string): boolean{
-    return this.nextUser === user;
+    return this.game.nextUser === user;
   }
 
   clickedOn(card: Card) {
