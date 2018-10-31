@@ -17,6 +17,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private _hubConnection: HubConnection;
   private user: string;
   private game: Game;
+  private switchCards: boolean = false;
 
   constructor(private gameService: GameService) { }
 

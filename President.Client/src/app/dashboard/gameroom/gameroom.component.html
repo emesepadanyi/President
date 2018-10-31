@@ -1,4 +1,7 @@
 <div class="gameSpace" *ngIf="game">
+  <div *ngIf="switchCards" class = "overlay">
+    <p>This is the overlay!</p>
+  </div>
   <div class="rounds">
     Round: {{game.round}}/10
   </div>

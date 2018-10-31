@@ -1,4 +1,5 @@
 .gameSpace {
+    z-index: 1;
     position: relative;
     width: 100%;
     background-color: aqua;
@@ -6,6 +7,26 @@
     height: -o-calc(100vh - 56px); /* opera */
     height: -webkit-calc(100vh - 56px); /* google, safari */
     height: -moz-calc(100vh - 56px); /* firefox */
+
+
+    >.overlay {
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.7);
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        padding: 0;
+        transition: opacity .5s;
+
+        p {
+            color: #fff;
+            line-height: 150px;
+            font-family: 'arial';
+            text-align: center;
+        }
+    }
 
     > .rounds{
         float: right;
