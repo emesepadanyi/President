@@ -7,6 +7,7 @@ import { Card }       from '../models/card.interface';
 import { MoveStatus } from '../models/move.status.interface';
 import { GameService } from '../services/game.service';
 import { Game } from '../models/game';
+import { NewRound } from '../models/new.round.interface';
 
 @Component({
   selector: 'app-gameroom',
@@ -18,6 +19,8 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private user: string;
   private game: Game;
   private switchCards: boolean = false;
+  private newRound: NewRound;
+
 
   constructor(private gameService: GameService) { }
 
@@ -49,6 +52,11 @@ export class GameroomComponent implements OnInit, OnDestroy {
       this.game.nextUser = nextUser;
       this.game.resetDeck();
     });
+
+    this._hubConnection.on('WaitForNewRound', (newRound: NewRound) => {
+      this.switchCards = true;
+      this.newRound = newRound;
+    });
   }
 
   counter(i: number){
@@ -69,10 +77,19 @@ export class GameroomComponent implements OnInit, OnDestroy {
       .subscribe(() => { });
   }
 
+  getCallToActionString(): string {
+    if(this.newRound.wait){
+      return "You will receive card(s) soon!";
+    }else{
+      return "Please select card(s) to swap!";
+    }
+  }
+
   ngOnDestroy(): void {
     this._hubConnection.off("StartGame");
     this._hubConnection.off("PutCard");
     this._hubConnection.off("ResetDeck");
+    this._hubConnection.off('WaitForNewRound');
     this._hubConnection.stop();
   }
 }

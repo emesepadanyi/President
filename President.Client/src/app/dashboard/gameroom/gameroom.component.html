@@ -1,6 +1,20 @@
 <div class="gameSpace" *ngIf="game">
-  <div *ngIf="switchCards" class = "overlay">
-    <p>This is the overlay!</p>
+  <div *ngIf="switchCards" class="overlay playingCards faceImages">
+    <div class="alert alert-info callToAction" role="alert">
+      {{getCallToActionString()}}
+    </div>
+    <ul class="table">
+      <label *ngFor="let card of newRound.cards" for="{{card.name | lowercase}}{{card.suit}}" class="card rank-{{card.name | lowercase}} {{card.suit}} activePlayer">
+        <span class="rank">{{card.name}}</span>
+        <div ngSwitch="{{card.suit}}">
+          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+        </div>
+        <input type="checkbox" id="{{card.name | lowercase}}{{card.suit}}" value="select" />
+      </label>
+    </ul>
   </div>
   <div class="rounds">
     Round: {{game.round}}/10

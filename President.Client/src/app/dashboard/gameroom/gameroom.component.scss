@@ -20,11 +20,21 @@
         padding: 0;
         transition: opacity .5s;
 
-        p {
-            color: #fff;
-            line-height: 150px;
-            font-family: 'arial';
-            text-align: center;
+        >.callToAction{
+            margin: auto;
+            width: 500px;
+            top: 20%;
+        }
+
+        >.table{
+            margin: auto;
+            width: 500px;
+            top: 40%;
+        }
+
+        li.activePlayer:hover{
+            bottom: 1em;
+            cursor: pointer;
         }
     }
 
