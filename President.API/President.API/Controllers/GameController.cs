@@ -128,7 +128,13 @@ namespace President.API.Controllers
 
                 foreach (var userId in game.Players())
                 {
-                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser });
+                    NewRoundViewModel nrvm = null;
+                    if (game.IsLeader(userId)) {
+                        nrvm = new NewRoundViewModel() { Wait = false, ChangedCards = null, Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
+                    } else {
+                        nrvm = new NewRoundViewModel() { Wait = true, ChangedCards = game.GetSwitchableCards(userId), Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
+                    }
+                    await gameContext.Clients.User(userId).WaitForNewRound(nrvm);
                 }
             }
             else if (game.IsGameStuck())

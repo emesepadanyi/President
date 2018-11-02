@@ -153,9 +153,28 @@ namespace President.API.Game
         }
 
         public void ResetThrowingDeck() => ThrownCards.Clear();
-
         public void ResetActivity() => Hands.ToList().ForEach(action: hand => { if(hand.Value.Cards.Count != 0) hand.Value.Active = true; });
-
         internal bool IsRoundOver() => (Hands.Where(predicate: (hand) => hand.Value.Cards.Count != 0).Count() == 1);
+        public bool IsLeader(string userName) => (Hands[userName].Rank == Rank.VicePresident || Hands[userName].Rank == Rank.President);
+        public List<CardDto> GetSwitchableCards(string userName)
+        {
+            List<CardDto> changedCards = new List<CardDto>();
+            
+            switch (Hands[userName].Rank)
+            {
+                case (Rank.President):
+                    this.Hands.ToList()
+                        .Find(hand => hand.Value.Rank == Rank.Scum).Value.Cards.TakeLast(2).ToList()
+                        .ForEach(card => 
+                            changedCards.Add(new CardDto(card))
+                        );
+                    break;
+                case (Rank.VicePresident):
+                    changedCards.Add(new CardDto(this.Hands.ToList().Find(hand => hand.Value.Rank == Rank.ViceScum).Value.Cards.Last()));
+                    break;
+            }
+
+            return changedCards;
+        }
     }
 }
