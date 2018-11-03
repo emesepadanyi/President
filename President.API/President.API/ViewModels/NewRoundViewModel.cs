@@ -7,7 +7,7 @@ namespace President.API.ViewModels
     {
         public bool Wait { get; set; }
         public List<CardDto> Cards { get; set; }
+        public List<CardDto> SwitchedCards { get; set; }
         public string OwnRank { get; set; }
-        public List<CardDto> ChangedCards { get; set; }
     }
 }

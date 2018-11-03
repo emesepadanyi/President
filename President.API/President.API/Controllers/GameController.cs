@@ -11,6 +11,7 @@ using President.DAL.Context;
 using President.DAL.Entities;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -55,11 +56,7 @@ namespace President.API.Controllers
                 OnlineGame game = new OnlineGame(userIDs);
                 Games.Add(game);
 
-                var nextUser = game.GetNextUser();
-                foreach (var userId in userIDs)
-                {
-                    await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser, Round = game.Rounds });
-                }
+                await DealCards(game);
             }
             catch (Exception e)
             {
@@ -96,7 +93,6 @@ namespace President.API.Controllers
         {
             try
             {
-
                 //check if everyone is still online
 
                 var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
@@ -110,6 +106,42 @@ namespace President.API.Controllers
                 return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", e.Message , ModelState));
             }
             return new OkObjectResult("User passed");
+        }
+
+        [HttpPost("switch")]
+        public async Task<IActionResult> SwitchAsync([FromBody]List<CardDto> cardDots)
+        {
+            try
+            {
+                //check if everyone is still online
+
+                var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
+
+                var cards = new List<Card>();
+                cardDots.ForEach(cardDto => cards.Add(new Card() { CardName = cardDto.name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) }));
+
+                game.Switch(user.UserName, cards);
+
+                if (game.IsSwitchingOver())
+                {
+                    game.StartNextRound();
+                    await DealCards(game);
+                }
+            }
+            catch (Exception e)
+            {
+                return new BadRequestObjectResult(Errors.AddErrorToModelState("validation_faliure", e.Message, ModelState));
+            }
+            return new OkObjectResult("User passed");
+        }
+
+        private async Task DealCards(OnlineGame game)
+        {
+            var nextUser = game.GetNextUser();
+            foreach (var userId in game.Players())
+            {
+                await gameContext.Clients.User(userId).StartGame(new GameViewModel() { Cards = game.Cards(userId), OwnRank = game.GetRank(userId), Hands = game.HandStatus(userId), NextUser = nextUser, Round = game.Rounds });
+            }
         }
 
         private async Task NotifyUsers(CardDto cardDto, User user, OnlineGame game)
@@ -130,9 +162,9 @@ namespace President.API.Controllers
                 {
                     NewRoundViewModel nrvm = null;
                     if (game.IsLeader(userId)) {
-                        nrvm = new NewRoundViewModel() { Wait = false, ChangedCards = null, Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
+                        nrvm = new NewRoundViewModel() { Wait = false, SwitchedCards = game.GetSwitchableCards(userId), Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
                     } else {
-                        nrvm = new NewRoundViewModel() { Wait = true, ChangedCards = game.GetSwitchableCards(userId), Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
+                        nrvm = new NewRoundViewModel() { Wait =  true, SwitchedCards = game.GetSwitchableCards(userId), Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
                     }
                     await gameContext.Clients.User(userId).WaitForNewRound(nrvm);
                 }

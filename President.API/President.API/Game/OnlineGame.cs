@@ -128,6 +128,50 @@ namespace President.API.Game
             if (ThrownCards.Count != 0 && !GameLogic.IsValidMove(ThrownCards[0], card)) throw new System.Exception("You have to top the previous card!");
         }
 
+        public void Switch(string userName, List<Card> cards)
+        {
+            ValidateSwitching(userName, cards);
+            SwitchCards(userName, cards);
+        }
+
+        public void StartNextRound()
+        {
+            Hands.ToList().ForEach(hand => hand.Value.SwitchedCards = null);
+        }
+
+        private void SwitchCards(string userName, List<Card> cards)
+        {
+            cards.ForEach(card => GetCardFromUser(userName, card));
+            Hands[userName].Cards.AddRange(Hands[userName].SwitchedCards);
+
+            switch (Hands[userName].Rank)
+            {
+                case (Rank.President):
+                    Hands.ToList()
+                        .Find(hand => hand.Value.Rank == Rank.Scum).Value
+                        .Cards.AddRange(cards);
+                    break;
+                case (Rank.VicePresident):
+                    Hands.ToList()
+                        .Find(hand => hand.Value.Rank == Rank.ViceScum).Value
+                        .Cards.AddRange(cards);
+                    break;
+            }
+        }
+
+        private void ValidateSwitching(string userName, List<Card> cards)
+        {
+            if (!(Hands[userName].Rank == Rank.President || Hands[userName].Rank == Rank.VicePresident)) throw new Exception("You are not int he position to switch cards!");
+            if (!((Hands[userName].Rank == Rank.President && cards.Count == 2)
+                || (Hands[userName].Rank == Rank.VicePresident && cards.Count == 1))) throw new Exception("Didn't chose the correct number of cards!");
+        }
+
+        internal bool IsSwitchingOver()
+        {
+            int noCards = Hands.First().Value.Cards.Count;
+            return Hands.All(hand => hand.Value.Cards.Count == noCards);
+        }
+
         public void Pass(string userName)
         {
             ValidatePassing(userName);
@@ -146,10 +190,10 @@ namespace President.API.Game
 
         public void PrepareNextRound()
         {
+            Rounds++;
             ResetThrowingDeck();
             DealCardsForPlayers();
             Hands.ToList().ForEach(action: hand => hand.Value.Active = true);
-            Rounds++;
         }
 
         public void ResetThrowingDeck() => ThrownCards.Clear();
@@ -163,17 +207,18 @@ namespace President.API.Game
             switch (Hands[userName].Rank)
             {
                 case (Rank.President):
-                    this.Hands.ToList()
-                        .Find(hand => hand.Value.Rank == Rank.Scum).Value.Cards.TakeLast(2).ToList()
-                        .ForEach(card => 
-                            changedCards.Add(new CardDto(card))
-                        );
+                    Hands[userName].SwitchedCards = Hands.ToList()
+                        .Find(hand => hand.Value.Rank == Rank.Scum).Value
+                        .GetSwitchedCards();
                     break;
                 case (Rank.VicePresident):
-                    changedCards.Add(new CardDto(this.Hands.ToList().Find(hand => hand.Value.Rank == Rank.ViceScum).Value.Cards.Last()));
+                    Hands[userName].SwitchedCards = Hands.ToList()
+                        .Find(hand => hand.Value.Rank == Rank.ViceScum).Value
+                        .GetSwitchedCards();
                     break;
             }
 
+            Hands[userName].GetSwitchedCards().ForEach(card => changedCards.Add(new CardDto(card)));
             return changedCards;
         }
     }
