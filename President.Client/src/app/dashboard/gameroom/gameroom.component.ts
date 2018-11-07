@@ -8,6 +8,8 @@ import { MoveStatus } from '../models/move.status.interface';
 import { GameService } from '../services/game.service';
 import { Game } from '../models/game';
 import { NewRound } from '../models/new.round.interface';
+import * as $ from 'jquery';
+
 
 @Component({
   selector: 'app-gameroom',
@@ -20,7 +22,6 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private game: Game;
   private switchCards: boolean = false;
   private newRound: NewRound;
-
 
   constructor(private gameService: GameService) { }
 
@@ -39,6 +40,8 @@ export class GameroomComponent implements OnInit, OnDestroy {
 
     this._hubConnection.on('StartGame', (gameStatus: GameStatus) => {
       if(!this.game) this.game = new Game();
+      this.switchCards = false;
+      this.newRound = null;
       this.game.setUp(gameStatus);
     });
 
@@ -83,6 +86,20 @@ export class GameroomComponent implements OnInit, OnDestroy {
     }else{
       return "Please select card(s) to swap!";
     }
+  }
+
+  sendSwitchableCards(){
+    var no = ($("input.selectableCards").toArray() as Array<HTMLInputElement>).filter(card => card.checked == true);
+    var selectedCards = new Array<Card>();
+    no.forEach(card =>
+      {
+        var c = new Card();
+        c.name = card.id.slice(0,1);
+        c.suit = card.id.slice(1);
+        selectedCards.push(c);
+      });
+    this.gameService.switchCards(selectedCards)
+      .subscribe(() => { });
   }
 
   ngOnDestroy(): void {

@@ -34,4 +34,15 @@ export class GameService extends BaseService {
       .post(this.configService.getApiURI() + "/game/pass", null, {headers})
       .catch(this.handleError);
   }
+
+  public switchCards(cards: Array<Card>){
+    let headers = new Headers();
+    headers.append('Content-Type', 'text/json');
+    let authToken = localStorage.getItem('auth_token');
+    headers.append('Authorization', `Bearer ${authToken}`);
+
+    return this.http
+      .post(this.configService.getApiURI() + "/game/switch", cards, {headers})
+      .catch(this.handleError);
+  }
 }

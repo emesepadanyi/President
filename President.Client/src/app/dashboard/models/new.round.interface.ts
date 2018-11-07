@@ -4,5 +4,5 @@ export interface NewRound {
     wait: boolean;
     cards: Card[];
     ownRank: string;
-    changedCards: Card[];
+    switchedCards: Card[];
 }

@@ -4,7 +4,8 @@
       {{getCallToActionString()}}
     </div>
     <ul class="table">
-      <label *ngFor="let card of newRound.cards" for="{{card.name | lowercase}}{{card.suit}}" class="card rank-{{card.name | lowercase}} {{card.suit}} activePlayer">
+      <label *ngFor="let card of newRound.cards" for="{{card.name | lowercase}}{{card.suit}}" class="card rank-{{card.name | lowercase}} {{card.suit}}"
+        [class.activePlayer]="!newRound.wait">
         <span class="rank">{{card.name}}</span>
         <div ngSwitch="{{card.suit}}">
           <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
@@ -12,9 +13,14 @@
           <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
           <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
         </div>
-        <input type="checkbox" id="{{card.name | lowercase}}{{card.suit}}" value="select" />
+        <input class="selectableCards" *ngIf="!newRound.wait" type="checkbox" id="{{card.name | lowercase}}{{card.suit}}" value="select" />
       </label>
     </ul>
+    <div class="switchButton">
+      <button type="button" class="btn btn-warning" [class.invisible]="newRound.wait" (click)="sendSwitchableCards()">
+        Switch
+      </button>
+    </div>
   </div>
   <div class="rounds">
     Round: {{game.round}}/10
@@ -42,11 +48,11 @@
       </li>
     </ul>
   </div>
-    <div class="passButton">
-      <button type="button" class="btn btn-warning" [class.invisible]="!isActivePlayer(user)" [attr.disabled]="isActivePlayer(user)? null:true" (click)="pass()">
-        Pass
-      </button>
-    </div>
+  <div class="passButton">
+    <button type="button" class="btn btn-warning" [class.invisible]="!isActivePlayer(user)" [attr.disabled]="isActivePlayer(user)? null:true" (click)="pass()">
+      Pass
+    </button>
+  </div>
   <div class="throwing_deck playingCards faceImages">
     <ul class="deck">
       <li *ngFor="let card of game.deck" class="card rank-{{card.name | lowercase}} {{card.suit}}" (click)="clickedOn(card)">
