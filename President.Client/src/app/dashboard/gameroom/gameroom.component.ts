@@ -81,14 +81,21 @@ export class GameroomComponent implements OnInit, OnDestroy {
   }
 
   getCallToActionString(): string {
-    if(this.newRound.wait){
-      return "You will receive card(s) soon!";
-    }else{
-      return "Please select card(s) to swap!";
+    switch (this.game.ownRank) {
+      case "President":
+        return "Please select two cards to swap with the scum!";
+      case "VicePresident":
+        return "Please select a cards to swap with the vice scum!";
+      case "ViceScum":
+        return "You will receive a card from the vice president soon!";
+      case "Scum":
+        return "You will receive two cards from the president soon!";
+      default:
+        return "You won't swap cards with anyone in this turn!";
     }
   }
 
-  sendSwitchableCards(){
+  sendSwitchableCards() {
     var no = ($("input.selectableCards").toArray() as Array<HTMLInputElement>).filter(card => card.checked == true);
     var selectedCards = new Array<Card>();
     no.forEach(card =>
