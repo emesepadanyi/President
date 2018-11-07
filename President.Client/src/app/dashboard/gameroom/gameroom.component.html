@@ -15,6 +15,16 @@
         </div>
         <input class="selectableCards" *ngIf="!newRound.wait" type="checkbox" id="{{card.name | lowercase}}{{card.suit}}" value="select" />
       </label>
+      <label *ngFor="let card of newRound.switchedCards" for="{{card.name | lowercase}}{{card.suit}}" class="disabledCard card rank-{{card.name | lowercase}} {{card.suit}}"
+        [class.activePlayer]="!newRound.wait">
+        <span class="rank">{{card.name}}</span>
+        <div ngSwitch="{{card.suit}}">
+          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+        </div>
+      </label>
     </ul>
     <div class="switchButton">
       <button type="button" class="btn btn-warning" [class.invisible]="newRound.wait" (click)="sendSwitchableCards()">

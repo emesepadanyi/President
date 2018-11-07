@@ -36,6 +36,10 @@
             bottom: 1em;
             cursor: pointer;
         }
+
+        .disabledCard{
+            background: lightgray;
+        }
     }
 
     > .rounds{
