@@ -143,18 +143,21 @@ namespace President.API.Game
         {
             cards.ForEach(card => GetCardFromUser(userName, card));
             Hands[userName].Cards.AddRange(Hands[userName].SwitchedCards);
+            Hands[userName].Cards = Hands[userName].Cards.OrderBy(card => card.CardName).ToList();
 
             switch (Hands[userName].Rank)
             {
                 case (Rank.President):
-                    Hands.ToList()
-                        .Find(hand => hand.Value.Rank == Rank.Scum).Value
-                        .Cards.AddRange(cards);
+                    var enemyCards = Hands.ToList()
+                        .Find(hand => hand.Value.Rank == Rank.Scum).Value.Cards;
+                    enemyCards.AddRange(cards);
+                    enemyCards.OrderBy(card => card.CardName).ToList();
                     break;
                 case (Rank.VicePresident):
-                    Hands.ToList()
-                        .Find(hand => hand.Value.Rank == Rank.ViceScum).Value
-                        .Cards.AddRange(cards);
+                    enemyCards = Hands.ToList()
+                        .Find(hand => hand.Value.Rank == Rank.ViceScum).Value.Cards;
+                    enemyCards.AddRange(cards);
+                    enemyCards.OrderBy(card => card.CardName).ToList();
                     break;
             }
         }
