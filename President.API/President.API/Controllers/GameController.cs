@@ -118,7 +118,7 @@ namespace President.API.Controllers
                 var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
 
                 var cards = new List<Card>();
-                cardDots.ForEach(cardDto => cards.Add(new Card() { CardName = cardDto.name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) }));
+                cardDots.ForEach(cardDto => cards.Add(new Card() { CardName = cardDto.name.ToUpper().ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.suit) }));
 
                 game.Switch(user.UserName, cards);
 

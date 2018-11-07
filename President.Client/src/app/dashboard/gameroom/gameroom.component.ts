@@ -95,7 +95,9 @@ export class GameroomComponent implements OnInit, OnDestroy {
       {
         var c = new Card();
         c.name = card.id.slice(0,1);
-        c.suit = card.id.slice(1);
+        var slice = 1;
+        if(c.name === '1'){c.name = '10'; slice = 2;}
+        c.suit = card.id.slice(slice);
         selectedCards.push(c);
       });
     this.gameService.switchCards(selectedCards)
