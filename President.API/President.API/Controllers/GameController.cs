@@ -160,13 +160,13 @@ namespace President.API.Controllers
 
                 foreach (var userId in game.Players())
                 {
-                    NewRoundViewModel nrvm = null;
-                    if (game.IsLeader(userId)) {
-                        nrvm = new NewRoundViewModel() { Wait = false, SwitchedCards = game.GetSwitchableCards(userId), Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
-                    } else {
-                        nrvm = new NewRoundViewModel() { Wait =  true, SwitchedCards = game.GetSwitchableCards(userId), Cards = game.Cards(userId), OwnRank = game.GetRank(userId) };
-                    }
-                    await gameContext.Clients.User(userId).WaitForNewRound(nrvm);
+                    await gameContext.Clients.User(userId).WaitForNewRound(new NewRoundViewModel() {
+                        Wait = !game.IsLeader(userId),
+                        SwitchedCards = game.GetSwitchableCards(userId),
+                        Cards = game.Cards(userId),
+                        OwnRank = game.GetRank(userId),
+                        ScoreCard = game.GetScoreCard()
+                    });
                 }
             }
             else if (game.IsGameStuck())

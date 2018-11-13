@@ -15,15 +15,23 @@ namespace President.API.Game
                     return;
                 case (1):
                     hands[userName].Rank = Rank.President;
+                    hands[userName].Score.Add(5);
                     break;
                 case (2):
                     hands[userName].Rank = Rank.VicePresident;
+                    hands[userName].Score.Add(4);
                     break;
                 default:
-                    if(finishedUsers == allUsers - 1)
+                    if (finishedUsers == allUsers - 1)
+                    {
                         hands[userName].Rank = Rank.ViceScum;
+                        hands[userName].Score.Add(2);
+                    }
                     else
+                    {
                         hands[userName].Rank = Rank.AverageJoe;
+                        hands[userName].Score.Add(3);
+                    }
                     break;
             }
             hands[userName].Active = false;
@@ -40,7 +48,7 @@ namespace President.API.Game
         public bool IsValidMove(Card AtTop, Card FromHand)
         {
             if (AtTop == null) return true;
-            return (AtTop.CardName < FromHand.CardName) ? true : false;
+            return (AtTop.CardName < FromHand.CardName);
         }
     }
 }

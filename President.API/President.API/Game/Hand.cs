@@ -6,9 +6,9 @@ namespace President.API.Game
     public class Hand
     {
         public List<Card> Cards { get; set; }
-        public List<Card> SwitchedCards { get; set; }
         public bool Active { get; set; }
         public Rank? Rank { get; set; }
+        public Score Score { get; } = new Score();
         public Hand(List<Card> cards)
         {
             Cards = cards;
@@ -16,27 +16,32 @@ namespace President.API.Game
             Rank = null;
         }
 
-        public List<Card> GetSwitchedCards()
-        {
-            if(SwitchedCards != null)
-            {
-                return SwitchedCards;
+        private List<Card> switchedCards;
+        public List<Card> SwitchedCards {
+            get {
+                if (switchedCards != null)
+                {
+                    return switchedCards;
+                }
+                else if (Rank == Game.Rank.Scum)
+                {
+                    switchedCards = Cards.TakeLast(2).ToList();
+                    Cards.RemoveRange(Cards.Count - 2, 2);
+                }
+                else if (Rank == Game.Rank.ViceScum)
+                {
+                    switchedCards = Cards.TakeLast(1).ToList();
+                    Cards.RemoveAt(Cards.Count - 1);
+                }
+                else
+                {
+                    switchedCards = new List<Card>();
+                }
+                return switchedCards;
             }
-            else if (Rank == Game.Rank.Scum)
-            {
-                SwitchedCards = Cards.TakeLast(2).ToList();
-                Cards.RemoveRange(Cards.Count-2, 2);
+            set {
+                switchedCards = value;
             }
-            else if(Rank == Game.Rank.ViceScum)
-            {
-                SwitchedCards = Cards.TakeLast(1).ToList();
-                Cards.RemoveAt(Cards.Count - 1);
-            }
-            else
-            {
-                SwitchedCards = new List<Card>();
-            }
-            return SwitchedCards;
         }
     }
 

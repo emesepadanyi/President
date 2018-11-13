@@ -78,6 +78,7 @@ namespace President.API.Game
             {
                 user = Hands.Where(predicate: (hand) => hand.Value.Cards.Count != 0).First().Key;
                 Hands[user].Rank = Rank.Scum;
+                Hands[user].Score.Add(1);
                 Hands[user].Active = true;
                 while(user != OrderOfPlayers[OrderOfPlayers.Count-1])
                 {
@@ -175,6 +176,16 @@ namespace President.API.Game
             return Hands.All(hand => hand.Value.Cards.Count == noCards);
         }
 
+        internal List<ScoreDto> GetScoreCard()
+        {
+            List<ScoreDto> scores = new List<ScoreDto>();
+            this.Hands.ToList().ForEach(hand =>
+            {
+                scores.Add(new ScoreDto() { UserName = hand.Key, Points = hand.Value.Score.Points, Total = hand.Value.Score.Total });
+            });
+            return scores;
+        }
+
         public void Pass(string userName)
         {
             ValidatePassing(userName);
@@ -212,16 +223,16 @@ namespace President.API.Game
                 case (Rank.President):
                     Hands[userName].SwitchedCards = Hands.ToList()
                         .Find(hand => hand.Value.Rank == Rank.Scum).Value
-                        .GetSwitchedCards();
+                        .SwitchedCards;
                     break;
                 case (Rank.VicePresident):
                     Hands[userName].SwitchedCards = Hands.ToList()
                         .Find(hand => hand.Value.Rank == Rank.ViceScum).Value
-                        .GetSwitchedCards();
+                        .SwitchedCards;
                     break;
             }
 
-            Hands[userName].GetSwitchedCards().ForEach(card => changedCards.Add(new CardDto(card)));
+            Hands[userName].SwitchedCards.ForEach(card => changedCards.Add(new CardDto(card)));
             return changedCards;
         }
     }
