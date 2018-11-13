@@ -1,9 +1,26 @@
 <div class="gameSpace" *ngIf="game">
   <div *ngIf="switchCards" class="overlay playingCards faceImages">
+    <table class="table scorecard table-striped table-dark">
+      <thead>
+        <tr>
+          <th>User Name</th>
+          <th *ngFor='let in of counter(10)  ; let i = index'>{{i + 1}}</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor='let score of newRound.scoreCard'>
+          <th>{{score.userName}}</th>
+          <th *ngFor='let point of score.points'>{{point}}</th>
+          <th *ngFor='let in of counter(10-score.points.length)'></th>
+          <th>{{score.total}}</th>
+        </tr>
+      </tbody>
+    </table>
     <div class="alert alert-info callToAction" role="alert">
       {{getCallToActionString()}}
     </div>
-    <ul class="table">
+    <ul class="gametable">
       <label *ngFor="let card of newRound.cards" for="{{card.name | lowercase}}{{card.suit}}" class="card rank-{{card.name | lowercase}} {{card.suit}}"
         [class.activePlayer]="!newRound.wait">
         <span class="rank">{{card.name}}</span>
@@ -37,7 +54,7 @@
   </div>
   <div *ngFor='let enemyHand of game.hands' class="enemyHand playingCards faceImages rotateHand">
     <ul class="hand">
-      <li *ngFor='let in of counter(enemyHand.noCards) ; let i = index' class="card back">*</li>
+      <li *ngFor='let in of counter(enemyHand.noCards)' class="card back">*</li>
     </ul>
     <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.userName}}</div>
     <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.rank}}</div>

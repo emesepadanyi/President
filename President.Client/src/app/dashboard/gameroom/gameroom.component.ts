@@ -85,7 +85,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
       case "President":
         return "Please select two cards to swap with the scum!";
       case "VicePresident":
-        return "Please select a cards to swap with the vice scum!";
+        return "Please select a card to swap with the vice scum!";
       case "ViceScum":
         return "You will receive a card from the vice president soon!";
       case "Scum":

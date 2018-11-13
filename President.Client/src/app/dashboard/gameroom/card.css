@@ -1,5 +1,5 @@
 .playingCards .card {
-    display: inline-block;
+    display: inline-flex;
     width: 3.3em;
     height: 4.6em;
     border: 1px solid #666;
@@ -431,10 +431,10 @@
 }
 
 
-/* hand (in your hand or on table or as a deck)
+/* hand (in your hand or on gametable or as a deck)
 ********************************************************************/
 
-.playingCards ul.table,
+.playingCards ul.gametable,
 .playingCards ul.hand,
 .playingCards ul.deck {
     list-style-type: none;
@@ -446,7 +446,7 @@
 .playingCards ul.hand {
     margin-bottom: 3.5em;
 }
-.playingCards ul.table li,
+.playingCards ul.gametable li,
 .playingCards ul.hand li,
 .playingCards ul.deck li {
     margin: 0;
