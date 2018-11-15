@@ -26,7 +26,7 @@ namespace President.API.Controllers
         private readonly PresidentDbContext presidentDbContext;
         private IHubContext<GameHub, IGameHub> gameContext;
 
-        private static readonly ConcurrentBag<OnlineGame> Games = new ConcurrentBag<OnlineGame>();
+        private static readonly BlockingCollection<OnlineGame> Games = new BlockingCollection<OnlineGame>();
 
         public GameController(
             IHttpContextAccessor httpContextAccessor,
@@ -155,18 +155,35 @@ namespace President.API.Controllers
 
             if (game.IsRoundOver())
             {
-                System.Threading.Thread.Sleep(1000);
-                game.PrepareNextRound();
-
-                foreach (var userId in game.Players())
+                if (game.IsGameOver())
                 {
-                    await gameContext.Clients.User(userId).WaitForNewRound(new NewRoundViewModel() {
-                        Wait = !game.IsLeader(userId),
-                        SwitchedCards = game.GetSwitchableCards(userId),
-                        Cards = game.Cards(userId),
-                        OwnRank = game.GetRank(userId),
-                        ScoreCard = game.GetScoreCard()
-                    });
+                    System.Threading.Thread.Sleep(1000);
+
+                    foreach (var userId in game.Players())
+                    {
+                        await gameContext.Clients.User(userId).GameEnded(new EndStatisticsViewModel() { ScoreCard = game.GetScoreCard() });
+                    }
+                    //save stats
+
+                    //dispose game 
+                    Games.TryTake(out game);
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    game.PrepareNextRound();
+
+                    foreach (var userId in game.Players())
+                    {
+                        await gameContext.Clients.User(userId).WaitForNewRound(new NewRoundViewModel()
+                        {
+                            Wait = !game.IsLeader(userId),
+                            SwitchedCards = game.GetSwitchableCards(userId),
+                            Cards = game.Cards(userId),
+                            OwnRank = game.GetRank(userId),
+                            ScoreCard = game.GetScoreCard()
+                        });
+                    }
                 }
             }
             else if (game.IsGameStuck())

@@ -9,5 +9,6 @@ namespace President.API.Hubs
         Task PutCard(MoveViewModel moveViewModel);
         Task ResetDeck(string NextPlayer);
         Task WaitForNewRound(NewRoundViewModel newRoundViewModel);
+        Task GameEnded(EndStatisticsViewModel endGameStatisticsViewModel);
     }
 }

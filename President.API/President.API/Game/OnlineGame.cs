@@ -137,7 +137,11 @@ namespace President.API.Game
 
         public void StartNextRound()
         {
-            Hands.ToList().ForEach(hand => hand.Value.SwitchedCards = null);
+            Hands.ToList().ForEach(action: hand =>
+            {
+                hand.Value.SwitchedCards = null;
+                hand.Value.Rank = null;
+            });
         }
 
         private void SwitchCards(string userName, List<Card> cards)
@@ -212,7 +216,9 @@ namespace President.API.Game
 
         public void ResetThrowingDeck() => ThrownCards.Clear();
         public void ResetActivity() => Hands.ToList().ForEach(action: hand => { if(hand.Value.Cards.Count != 0) hand.Value.Active = true; });
-        internal bool IsRoundOver() => (Hands.Where(predicate: (hand) => hand.Value.Cards.Count != 0).Count() == 1);
+
+        public bool IsGameOver() => (Rounds == 10);
+        public bool IsRoundOver() => (Hands.Where(predicate: (hand) => hand.Value.Cards.Count != 0).Count() == 1);
         public bool IsLeader(string userName) => (Hands[userName].Rank == Rank.VicePresident || Hands[userName].Rank == Rank.President);
         public List<CardDto> GetSwitchableCards(string userName)
         {
