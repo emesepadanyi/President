@@ -9,6 +9,7 @@ import { GameService } from '../services/game.service';
 import { Game } from '../models/game';
 import { NewRound } from '../models/new.round.interface';
 import * as $ from 'jquery';
+import { EndStatistics } from '../models/end.statistics.interface';
 
 
 @Component({
@@ -22,6 +23,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private game: Game;
   private switchCards: boolean = false;
   private newRound: NewRound;
+  private endStatistics: EndStatistics;
 
   constructor(private gameService: GameService) { }
 
@@ -42,6 +44,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
       if(!this.game) this.game = new Game();
       this.switchCards = false;
       this.newRound = null;
+      this.endStatistics = null;
       this.game.setUp(gameStatus);
     });
 
@@ -59,6 +62,11 @@ export class GameroomComponent implements OnInit, OnDestroy {
     this._hubConnection.on('WaitForNewRound', (newRound: NewRound) => {
       this.switchCards = true;
       this.newRound = newRound;
+    });
+
+    this._hubConnection.on('GameEnded', (endStatistics: EndStatistics) => {
+      this.game = null;
+      this.endStatistics = endStatistics;
     });
   }
 
@@ -116,6 +124,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
     this._hubConnection.off("PutCard");
     this._hubConnection.off("ResetDeck");
     this._hubConnection.off('WaitForNewRound');
+    this._hubConnection.off('GameEnded');
     this._hubConnection.stop();
   }
 }

@@ -94,3 +94,22 @@
     </ul>
   </div>
 </div>
+<div class="gameSpace endGame" *ngIf="endStatistics">
+  <table class="table scorecard table-striped table-dark">
+    <thead>
+      <tr>
+        <th>User Name</th>
+        <th *ngFor='let in of counter(10)  ; let i = index'>{{i + 1}}</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor='let score of endStatistics.scoreCard'>
+        <th>{{score.userName}}</th>
+        <th *ngFor='let point of score.points'>{{point}}</th>
+        <th *ngFor='let in of counter(10-score.points.length)'></th>
+        <th>{{score.total}}</th>
+      </tr>
+    </tbody>
+  </table>
+</div>
