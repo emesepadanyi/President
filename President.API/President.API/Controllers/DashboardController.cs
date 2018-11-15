@@ -36,8 +36,7 @@ namespace President.API.Controllers
                 Message = "This is secure API and user data!",
                 user.FirstName,
                 user.LastName,
-                user.PictureUrl,
-                user.FacebookId
+                user.PictureUrl
             });
         }
     }

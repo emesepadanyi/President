@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using President.DAL.Context;
 
 namespace President.DAL.Migrations
 {
     [DbContext(typeof(PresidentDbContext))]
-    partial class PresidentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181115112125_Statistics")]
+    partial class Statistics
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
