@@ -174,13 +174,13 @@ namespace President.API.Game
                 || (Hands[userName].Rank == Rank.VicePresident && cards.Count == 1))) throw new Exception("Didn't chose the correct number of cards!");
         }
 
-        internal bool IsSwitchingOver()
+        public bool IsSwitchingOver()
         {
             int noCards = Hands.First().Value.Cards.Count;
             return Hands.All(hand => hand.Value.Cards.Count == noCards);
         }
 
-        internal List<ScoreDto> GetScoreCard()
+        public List<ScoreDto> GetScoreCard()
         {
             List<ScoreDto> scores = new List<ScoreDto>();
             this.Hands.ToList().ForEach(hand =>
@@ -188,6 +188,15 @@ namespace President.API.Game
                 scores.Add(new ScoreDto() { UserName = hand.Key, Points = hand.Value.Score.Points, Total = hand.Value.Score.Total });
             });
             return scores;
+        }
+
+        public int GetTotalPoints(string userName) => Hands[userName].Score.Total;
+
+        public IEnumerable<string> Winners()
+        {
+            int max = Hands.Select(hand => hand.Value.Score.Total).Max();
+            var winners = Hands.Where(hand => hand.Value.Score.Total == max).Select(winner => winner.Key);
+            return winners;
         }
 
         public void Pass(string userName)

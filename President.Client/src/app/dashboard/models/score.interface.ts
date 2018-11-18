@@ -1,4 +1,3 @@
-
 export interface Score {
     userName: string;
     points: number[];

@@ -87,4 +87,10 @@
         top: -webkit-calc(50vh - 140px); /* google, safari */
         top: -moz-calc(50vh - 140px); /* firefox */
     }
+
+    &.endGame{
+        .card{
+            margin: 10px;
+        }
+    }
 }

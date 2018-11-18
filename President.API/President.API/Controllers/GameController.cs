@@ -159,13 +159,16 @@ namespace President.API.Controllers
                 {
                     System.Threading.Thread.Sleep(1000);
 
+                    var winners = game.Winners();
                     foreach (var userId in game.Players())
                     {
-                        await gameContext.Clients.User(userId).GameEnded(new EndStatisticsViewModel() { ScoreCard = game.GetScoreCard() });
-                    }
-                    //save stats
+                        var stats = SaveStats(game, winners, userId);
 
-                    //dispose game 
+                        await gameContext.Clients.User(userId).GameEnded(new EndStatisticsViewModel() { ScoreCard = game.GetScoreCard(), Stats = stats });
+                    }
+
+                    presidentDbContext.SaveChanges();
+
                     Games.TryTake(out game);
                 }
                 else
@@ -196,6 +199,22 @@ namespace President.API.Controllers
                 }
                 game.ResetActivity();
             }
+        }
+
+        private PlayerStatistics SaveStats(OnlineGame game, IEnumerable<string> winners, string userId)
+        {
+            var stats = presidentDbContext.PlayerStatistics.SingleOrDefault(s => s.User.UserName.Equals(userId));
+            if (stats == null)
+            {
+                var usr = presidentDbContext.Users.Single(dbUser => dbUser.UserName == userId);
+                stats = new PlayerStatistics() { User = usr, GamesPlayed = 0, SumPointsEarned = 0, TimesWon = 0 };
+                presidentDbContext.Add(stats);
+            }
+            stats.GamesPlayed += 1;
+            stats.SumPointsEarned += game.GetTotalPoints(userId);
+            if (winners.Contains(userId)) stats.TimesWon += 1;
+
+            return stats;
         }
     }
 }
