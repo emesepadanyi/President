@@ -29,7 +29,7 @@ using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using President.API.Hubs;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
+using President.BLL.Services;
 
 namespace President.API
 {
@@ -173,6 +173,8 @@ namespace President.API
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
                 options.SwaggerDoc("v1", new Info { Title = "President", Version = "v1" });
             });
+
+            services.AddScoped<IRelationshipService, RelationshipService>();
 
             services.AddSignalR();
         }

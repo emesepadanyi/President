@@ -9,7 +9,6 @@ using President.DAL.Entities;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Cors;
 
 namespace President.API.Controllers
 {
