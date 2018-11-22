@@ -4,7 +4,7 @@
     {
         public int ID { get; set; }
         public User Sender { get; set; }
-        public User Reciever { get; set; }
+        public User Receiver { get; set; }
         public string Status { get; set; }
     }
 }

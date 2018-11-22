@@ -18,20 +18,18 @@ namespace President.BLL.Services
         //GET
         virtual public List<User> GetFriends(string userId)
         {
-            var friends = context.Relationships.
-                Where((rel) => ((rel.Sender.Id == userId || rel.Reciever.Id == userId) && rel.Status == "accepted")).
-                Select(rel => rel.Sender.Id != userId ? rel.Sender : rel.Reciever).
+            return context.Relationships.
+                Where((rel) => ((rel.Sender.Id == userId || rel.Receiver.Id == userId) && rel.Status == "accepted")).
+                Select(rel => rel.Sender.Id != userId ? rel.Sender : rel.Receiver).
                 ToList();
-            return friends;
         }
 
         virtual public List<User> GetRequests(string userId)
         {
-            var requests = context.Relationships.
-                Where((rel) => (rel.Reciever.Id == userId && rel.Status == "requested")).
+            return context.Relationships.
+                Where((rel) => (rel.Receiver.Id == userId && rel.Status == "requested")).
                 Select(rel => rel.Sender).
                 ToList();
-            return requests;
         }
 
         virtual public List<User> FindUsers(string userId, string keyWord)
@@ -55,34 +53,31 @@ namespace President.BLL.Services
             return finalUsers;
         }
 
-
-
-        virtual public bool AcceptRequest(string senderId, string recieverId)
+        virtual public bool AcceptRequest(string senderId, string receiverId)
         {
             context.Relationships.
-                Where(rel => (rel.Sender.Id == senderId && rel.Reciever.Id == recieverId && rel.Status == "requested")).
+                Where(rel => (rel.Sender.Id == senderId && rel.Receiver.Id == receiverId && rel.Status == "requested")).
                 First().
                 Status = "accepted";
             context.SaveChanges();
             return true;
         }
 
-        virtual public bool RejectRequest(string senderId, string recieverId)
+        virtual public bool RejectRequest(string senderId, string receiverId)
         {
             context.Relationships.
-                Where(rel => (rel.Sender.Id == senderId && rel.Reciever.Id == recieverId && rel.Status == "requested")).
+                Where(rel => (rel.Sender.Id == senderId && rel.Receiver.Id == receiverId && rel.Status == "requested")).
                 First().
                 Status = "rejected";
             context.SaveChanges();
             return true;
         }
 
-        virtual public bool CreateRequest(string senderId, string recieverId)
+        virtual public bool CreateRequest(string senderId, string receiverId)
         {
-            if (context.Relationships.
-                 Where(rel =>
-                     (rel.Sender.Id == senderId && rel.Reciever.Id == recieverId) ||
-                     (rel.Sender.Id == recieverId && rel.Reciever.Id == senderId)).
+            if (context.Relationships.Where(rel =>
+                     (rel.Sender.Id == senderId && rel.Receiver.Id == receiverId) ||
+                     (rel.Sender.Id == receiverId && rel.Receiver.Id == senderId)).
                  FirstOrDefault() == null)
             {
                 return false;
@@ -90,17 +85,16 @@ namespace President.BLL.Services
             else
             {
                 var sender = context.Users.Where(user => user.Id == senderId).First();
-                var reciever = context.Users.Where(user => user.Id == recieverId).First();
-                context.Relationships.Add(new Relationship { Sender = sender, Reciever = reciever, Status = "requested" });
+                var receiver = context.Users.Where(user => user.Id == receiverId).First();
+                context.Relationships.Add(new Relationship { Sender = sender, Receiver = receiver, Status = "requested" });
                 context.SaveChanges();
                 return true;
             }
         }
 
-        virtual public void DeleteRelationship(string senderId, string recieverId)
+        virtual public void DeleteRelationship(string senderId, string receiverId)
         {
             throw new NotImplementedException();
         }
-
     }
 }

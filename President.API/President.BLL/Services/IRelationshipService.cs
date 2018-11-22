@@ -11,13 +11,13 @@ namespace President.BLL.Services
         List<User> FindUsers(string userId, string keyWord);
 
         //POST
-        bool CreateRequest(string senderId, string recieverId);
+        bool CreateRequest(string senderId, string receiverId);
 
         //UPDATE
-        bool AcceptRequest(string senderId, string recieverId); //throws: InvalidOperationException
-        bool RejectRequest(string senderId, string recieverId);
+        bool AcceptRequest(string senderId, string receiverId); //throws: InvalidOperationException
+        bool RejectRequest(string senderId, string receiverId);
 
         //DELETE
-        void DeleteRelationship(string senderId, string recieverId);
+        void DeleteRelationship(string senderId, string receiverId);
     }
 }

@@ -33,9 +33,9 @@ namespace President.API.Tests.MockClasses
             context.Users.Add(Noncsi);
             context.Users.Add(Blanka);
 
-            context.Relationships.Add(new Relationship { Sender = Fanni, Reciever = Eszter, Status = "requested" });
-            context.Relationships.Add(new Relationship { Sender = Eszter, Reciever = Noncsi, Status = "accepted" });
-            context.Relationships.Add(new Relationship { Sender = Blanka, Reciever = Noncsi, Status = "rejected" });
+            context.Relationships.Add(new Relationship { Sender = Fanni, Receiver = Eszter, Status = "requested" });
+            context.Relationships.Add(new Relationship { Sender = Eszter, Receiver = Noncsi, Status = "accepted" });
+            context.Relationships.Add(new Relationship { Sender = Blanka, Receiver = Noncsi, Status = "rejected" });
 
             context.SaveChanges();
 
