@@ -13,11 +13,16 @@ export class GameService extends BaseService {
     this.baseUrl = configService.getApiURI();
   }
 
-  public sendCard(card: Card) {
+  private getHeader(): Headers{
     let headers = new Headers();
     headers.append('Content-Type', 'text/json');
     let authToken = localStorage.getItem('auth_token');
     headers.append('Authorization', `Bearer ${authToken}`);
+    return headers;
+  }
+
+  public sendCard(card: Card) {
+    let headers =  this.getHeader();
 
     return this.http
       .post(this.configService.getApiURI() + "/game/card", card, {headers})
@@ -25,10 +30,7 @@ export class GameService extends BaseService {
   }
 
   public pass(){
-    let headers = new Headers();
-    headers.append('Content-Type', 'text/json');
-    let authToken = localStorage.getItem('auth_token');
-    headers.append('Authorization', `Bearer ${authToken}`);
+    let headers = this.getHeader();
 
     return this.http
       .post(this.configService.getApiURI() + "/game/pass", null, {headers})
@@ -36,10 +38,7 @@ export class GameService extends BaseService {
   }
 
   public switchCards(cards: Array<Card>){
-    let headers = new Headers();
-    headers.append('Content-Type', 'text/json');
-    let authToken = localStorage.getItem('auth_token');
-    headers.append('Authorization', `Bearer ${authToken}`);
+    let headers =  this.getHeader();
 
     return this.http
       .post(this.configService.getApiURI() + "/game/switch", cards, {headers})
