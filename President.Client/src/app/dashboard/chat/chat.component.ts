@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ConfigService } from "../../services/config.service";
 import { HubConnection } from '@aspnet/signalr';
 import * as signalR from '@aspnet/signalr';
@@ -12,16 +12,20 @@ import { ChatMessage } from "../models/chat.message.interface";
   styleUrls: ['./chat.component.scss']
 })
 
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
   private _hubConnection: HubConnection;
+  private user: string;
   messages: ChatMessage[] = [];
   message: string;
 
   constructor(private http: Http, private configService: ConfigService) { }
 
   ngOnInit(): void {
+    let authToken = localStorage.getItem('auth_token');
+    this.user = localStorage.getItem('user_name');
+
     this._hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:5001/chat")
+      .withUrl("https://localhost:5001/chat", { accessTokenFactory: () => authToken })
       .build();
 
     this._hubConnection
@@ -43,5 +47,10 @@ export class ChatComponent implements OnInit {
 
     this.http.post(this.configService.getApiURI() + "/message", `"${this.message}"`, {headers}) 
     .subscribe( () => {});
+  }
+
+  ngOnDestroy(): void {
+    this._hubConnection.off('BroadcastMessage');
+    this._hubConnection.stop();
   }
 }
