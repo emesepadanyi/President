@@ -26,7 +26,6 @@ export class SpinnerComponent implements OnDestroy {
           return;
       }
 
-      // specify window to side-step conflict with node types: https://github.com/mgechev/angular2-seed/issues/901
       this.currentTimeout = window.setTimeout(() => {
           this.isDelayedRunning = value;
           this.cancelTimeout();
