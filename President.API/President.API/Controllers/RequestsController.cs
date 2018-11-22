@@ -51,22 +51,16 @@ namespace President.API.Controllers
             var requests = relatioshipService.GetRequests(user.Id);
             var requestsDtos = mapper.Map<IList<UserDto>>(requests);
 
-
-            if (requestsDtos == null)
-            {
-                return NotFound();
-            }
-
             return Ok(requestsDtos);
         }
 
         // PUT requests/accept
         [HttpPut("accept")]
-        public IActionResult AcceptRequest([FromBody]string senderId)
+        public IActionResult AcceptRequest([FromBody]UserDto sender)
         {
             try
             {
-                relatioshipService.AcceptRequest(senderId, user.Id);
+                relatioshipService.AcceptRequest(sender.Id, user.Id);
                 return Ok();
             }
             catch (InvalidOperationException)
@@ -77,11 +71,11 @@ namespace President.API.Controllers
 
         // PUT requests/reject
         [HttpPut("reject")]
-        public IActionResult RejectRequest([FromBody]string senderId)
+        public IActionResult RejectRequest([FromBody]UserDto sender)
         {
             try
             {
-                relatioshipService.RejectRequest(senderId, user.Id);
+                relatioshipService.RejectRequest(sender.Id, user.Id);
                 return Ok();
             }
             catch (InvalidOperationException)
@@ -90,10 +84,10 @@ namespace President.API.Controllers
             }
         }
 
-        [HttpPost("{recieverId}")]
-        public IActionResult CreateRequest([FromBody]string recieverId)
+        [HttpPost]
+        public IActionResult CreateRequest([FromBody]UserDto receiver)
         {
-            if (relatioshipService.CreateRequest(user.Id, recieverId))
+            if (relatioshipService.CreateRequest(user.Id, receiver.Id))
             {
                 return Ok();
             }

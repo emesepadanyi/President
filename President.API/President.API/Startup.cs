@@ -109,7 +109,7 @@ namespace President.API
                         // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/gameHub")))
+                            ( path.StartsWithSegments("/gameHub") || path.StartsWithSegments("/chat") ))
                         {
                             // Read the token out of the query string
                             context.Token = accessToken;

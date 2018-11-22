@@ -34,23 +34,11 @@ namespace President.BLL.Services
 
         virtual public List<User> FindUsers(string userId, string keyWord)
         {
-            //Console.WriteLine("Find users with userId: "+userId+" & search key word: " + keyWord);
-            var finalUsers = new List<User>();
-            context.Users.
+            return context.Users.
                 Where(user => user.Id != userId &&
                           (user.FirstName.Contains(keyWord) ||
                           user.LastName.Contains(keyWord) ||
-                          user.UserName.Contains(keyWord))).ToList()
-                .ForEach(user =>
-                {
-                    if (context.Relationships.Where(rel =>
-                            (rel.Sender.Id == userId && rel.Reciever.Id == user.Id) ||
-                            (rel.Sender.Id == user.Id && rel.Reciever.Id == userId)).FirstOrDefault() != null)
-                    {
-                        finalUsers.Add(user);
-                    }
-                });
-            return finalUsers;
+                          user.UserName.Contains(keyWord))).ToList();
         }
 
         virtual public bool AcceptRequest(string senderId, string receiverId)
@@ -80,16 +68,13 @@ namespace President.BLL.Services
                      (rel.Sender.Id == receiverId && rel.Receiver.Id == senderId)).
                  FirstOrDefault() == null)
             {
-                return false;
-            }
-            else
-            {
                 var sender = context.Users.Where(user => user.Id == senderId).First();
                 var receiver = context.Users.Where(user => user.Id == receiverId).First();
                 context.Relationships.Add(new Relationship { Sender = sender, Receiver = receiver, Status = "requested" });
                 context.SaveChanges();
                 return true;
             }
+            return false;
         }
 
         virtual public void DeleteRelationship(string senderId, string receiverId)

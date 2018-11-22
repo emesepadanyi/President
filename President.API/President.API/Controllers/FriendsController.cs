@@ -53,11 +53,6 @@ namespace President.API.Controllers
             var friends = relatioshipService.GetFriends(user.Id);
             var friendDtos = mapper.Map<IList<UserDto>>(friends);
 
-            if (friendDtos == null || friendDtos.Count == 0)
-            {
-                return NotFound();
-            }
-
             return Ok(friendDtos);
         }
 
@@ -67,11 +62,6 @@ namespace President.API.Controllers
         {
             var users = relatioshipService.FindUsers(user.Id, keyWord);
             var userDtos = mapper.Map<IList<UserDto>>(users);
-
-            if (userDtos == null)
-            {
-                return NotFound();
-            }
 
             return Ok(userDtos);
         }
