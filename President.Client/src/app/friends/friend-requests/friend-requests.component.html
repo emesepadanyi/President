@@ -1,0 +1,9 @@
+<div *ngIf="myRequests === undefined">
+  <h2>Loading...</h2>
+</div>
+<div *ngFor="let friend of myRequests" class="cards">
+  <app-user-card [user]=friend [request]=true [requestParent]=this></app-user-card>
+</div>
+<div *ngIf="myRequests !== undefined && myRequests.length===0">
+  <h2>Nothing to show. You've responded to all requests!</h2>
+</div>

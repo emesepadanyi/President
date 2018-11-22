@@ -1,0 +1,14 @@
+<div class="input-group">
+  <input class="form-control border-secondary py-2" type="search" value="" [(ngModel)]="key">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" (click)="find()">
+      Search
+    </button>
+  </div>
+</div>
+<div *ngFor="let user of hits" class="cards">
+  <app-user-card [user]=user [find]=true [findParent]=this></app-user-card>
+</div>
+<div *ngIf="hits !== undefined && hits.length===0">
+  <h2>Nothing to show. Try an other name!</h2>
+</div>

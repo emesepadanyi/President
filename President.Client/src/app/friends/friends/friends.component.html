@@ -1,0 +1,9 @@
+<div *ngIf="myFriends === undefined">
+  <h2>Loading...</h2>
+</div>
+<div *ngFor="let friend of myFriends" class="cards">
+  <app-user-card [user]=friend></app-user-card>
+</div>
+<div *ngIf="myFriends !== undefined && myFriends.length===0">
+  <h2>Nothing to show. Time to find friends!</h2>
+</div>

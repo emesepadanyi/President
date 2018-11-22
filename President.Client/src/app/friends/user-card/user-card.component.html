@@ -1,0 +1,11 @@
+<div class="card">
+    <img src="{{user.profilePicture}}" alt="pic" style="width:100%">
+    <h1>{{user.userName}}</h1>
+    <div *ngIf="request">
+        <button type="button" class="btn btn-outline-success" (click)="accept(user.id)">Accept</button>
+        <button type="button" class="btn btn-outline-danger"(click)="reject(user.id)">Reject</button>
+    </div>
+    <div *ngIf="find">
+        <button type="button" class="btn btn-outline-primary" (click)="send(user.id)">Send request!</button>
+    </div>
+</div>

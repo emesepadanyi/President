@@ -15,6 +15,8 @@ import { HeaderComponent } from './header/header.component';
 import { AccountModule }  from './login/account/account.module';
 /* Dashboard Imports */
 import { DashboardModule }  from './dashboard/dashboard.module';
+/* Friend Imports */
+import {FriendsModule} from './friends/friends.module';
 
 import { ConfigService } from './services/config.service';
 
@@ -27,6 +29,7 @@ import { ConfigService } from './services/config.service';
   imports: [
     AccountModule,
     DashboardModule,
+    FriendsModule,
     BrowserModule,
     FormsModule,
     HttpModule,
