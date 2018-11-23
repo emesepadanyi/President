@@ -10,9 +10,6 @@ import { EmailValidator } from '../../directives/email.validator.directive';
 import { routing }  from './account.routing';
 import { RegistrationFormComponent } from './registration-form/registration-form.component';
 import { LoginFormComponent } from './login-form/login-form.component';
-//TODO include this in solution
-//import { FacebookLoginComponent } from './facebook-login/facebook-login.component';
-
 
 @NgModule({
   imports: [
@@ -22,7 +19,6 @@ import { LoginFormComponent } from './login-form/login-form.component';
     RegistrationFormComponent
     ,EmailValidator
     , LoginFormComponent
-    //, FacebookLoginComponent
   ],
   providers: [ UserService ]
 })

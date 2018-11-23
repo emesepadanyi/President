@@ -8,13 +8,13 @@ namespace President.API.Dtos
 {
     public class CardDto
     {
-        public string suit { get; set; }
-        public string name { get; set; }
+        public string Suit { get; set; }
+        public string Name { get; set; }
 
         public CardDto(Card card)
         {
-            suit = card.Suit.ToString();
-            name = card.CardName.ToCardString();
+            Suit = card.Suit.ToString();
+            Name = card.CardName.ToCardString();
         }
 
         public CardDto() { }
