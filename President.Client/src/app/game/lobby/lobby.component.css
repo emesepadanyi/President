@@ -1,0 +1,15 @@
+.space{
+    margin: 20px;
+}
+
+p{
+    margin-top: 1rem;
+}
+
+.card-body{
+    padding: .75rem 1.25rem;
+}
+
+.friend{
+    width: stretch;
+}

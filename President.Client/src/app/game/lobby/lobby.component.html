@@ -1,0 +1,57 @@
+<div class="card space">
+  <div class="card-header text-center">
+    New Game
+  </div>
+  <form #newGameForm="ngForm" (ngSubmit)="submit(newGameForm)">
+    <div class="card-body">
+      <p>
+        Add Players!
+      </p>
+      <div class="row">
+        <div class="col-sm-3">
+          <select class="friend custom-select" [(ngModel)]="friend0" name="friend0">
+            <option [value]="friend0" selected="selected">{{userName}}</option>
+          </select>
+        </div>
+        <div class="col-sm-3">
+          <select class="friend custom-select" [(ngModel)]="friend1" name="friend1">
+            <option value="" disabled selected>Select a friend!</option>
+            <option *ngFor="let friend of friends" [value]="friend">{{friend}}</option>
+          </select>
+        </div>
+        <div class="col-sm-3">
+          <select class="friend custom-select" [(ngModel)]="friend2" name="friend2">
+            <option value="" disabled selected>Select a friend!</option>
+            <option *ngFor="let friend of friends" [value]="friend">{{friend}}</option>
+          </select>
+        </div>
+        <div class="col-sm-3">
+          <select class="friend custom-select" [(ngModel)]="friend3" name="friend3">
+            <option value="" disabled selected>Select a friend!</option>
+            <option *ngFor="let friend of friends" [value]="friend">{{friend}}</option>
+          </select>
+        </div>
+      </div>
+      <p>
+        Settings
+      </p>
+      <div class="row">
+        <div class="col-sm-6 input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="">Number of rounds</span>
+          </div>
+          <input type="number" name="rounds" [(ngModel)]="rounds" class="form-control" value="10" step="1" min="3" max="10">
+        </div>
+        <div class="col-sm-6 input-group">
+          <input type="number" name="cards" [(ngModel)]="cards" class="form-control" value="13" step="1" min="3" max="13">
+          <div class="input-group-append">
+            <span class="input-group-text" id="">Number of cards</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer text-center">
+      <button type="submit" class="btn btn-default">Start playing!</button>
+    </div>
+  </form>
+</div>

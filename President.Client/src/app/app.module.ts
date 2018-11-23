@@ -17,6 +17,8 @@ import { AccountModule }  from './login/account/account.module';
 import { DashboardModule }  from './dashboard/dashboard.module';
 /* Friend Imports */
 import {FriendsModule} from './friends/friends.module';
+/* Game Imports */
+import {GameModule} from './game/game.module';
 
 import { ConfigService } from './services/config.service';
 
@@ -30,6 +32,7 @@ import { ConfigService } from './services/config.service';
     AccountModule,
     DashboardModule,
     FriendsModule,
+    GameModule,
     BrowserModule,
     FormsModule,
     HttpModule,
