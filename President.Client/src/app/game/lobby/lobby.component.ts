@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NewGame } from '../models/new-game';
+import { LobbyService } from '../services/lobby.service';
 
 @Component({
   selector: 'app-lobby',
@@ -9,32 +10,63 @@ import { NewGame } from '../models/new-game';
 export class LobbyComponent implements OnInit {
   friends: string[];
   userName: string;
+  error: string;
+  validationError: string;
   newGameForm: NewGame;
+  loading: boolean;
 
-  constructor() { 
+  constructor(private lobbyService: LobbyService) {
   }
 
   ngOnInit() {
-    this.friends = ["Noncsi", "Peti", "Ede", "Bence"];
-    this.userName = localStorage.getItem("user_name");
+    this.loading = true;
+    this.lobbyService.getOnlineFriends()
+      .subscribe(
+        result => {
+          if (result) {
+            this.friends = result;
+            this.loading = false;
+          }
+        },
+        error => this.error = error);
 
-    this.newGameForm = {
-      friend0: this.userName,
-      friend1: this.friends[0],
-      friend2: this.friends[1],
-      friend3: this.friends[2],
-      cards: 13,
-      rounds: 10
-    }
+    this.userName = localStorage.getItem("user_name");
   }
 
   submit({value, valid}: {value: NewGame, valid: boolean}){
-    this.newGameForm.friend1 = value.friend1 || this.newGameForm.friend1;
-    this.newGameForm.friend2 = value.friend2 || this.newGameForm.friend2;
-    this.newGameForm.friend3 = value.friend3 || this.newGameForm.friend3;
-    this.newGameForm.cards = value.cards || this.newGameForm.cards;
-    this.newGameForm.rounds = value.rounds || this.newGameForm.rounds;
+    let friends = this.collectFriends(value);
+    if(!this.validate(valid, friends)){
+      return
+    }
+
     debugger;
   }
 
+  validate(valid: boolean, friends: string[]): boolean {
+    if(!valid){
+      this.validationError = "Each player should be defined";
+      return false;
+    }
+
+    if(!this.validatePlayers(friends)){
+      this.validationError = "Each player should be unique";
+      return false;
+    }
+    this.validationError = null;
+    return true;
+  }
+
+  collectFriends(value: NewGame): string[] {
+    let friends = new Array<string>();
+    friends.push(value.friend0);
+    friends.push(value.friend1);
+    friends.push(value.friend2);
+    friends.push(value.friend3);
+    return friends;
+  }
+
+  validatePlayers(friends: string[]): boolean {
+    let reducedFriends = new Set(friends);
+    return reducedFriends.size == friends.length;
+  }
 }

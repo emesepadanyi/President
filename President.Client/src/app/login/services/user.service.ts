@@ -88,6 +88,11 @@ export class UserService extends BaseService {
   }
 
   isLoggedIn() {
+    if(this.isLoggedIn){
+      if(!this._hubConnection){
+        this.subscribeOnline();
+      }
+    }
     return this.loggedIn;
   }
 }

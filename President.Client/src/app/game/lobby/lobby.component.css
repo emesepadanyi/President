@@ -13,3 +13,7 @@ p{
 .friend{
     width: stretch;
 }
+
+.error{
+    margin-top: 1rem;
+}
