@@ -11,17 +11,19 @@ import { BehaviorSubject } from 'rxjs/Rx';
 
 // Add the RxJS Observable operators we need in this app.
 import '../../rxjs-operators';
+import { HubConnection } from '@aspnet/signalr';
+import * as signalR from '@aspnet/signalr';
 
 @Injectable()
 
 export class UserService extends BaseService {
-
   baseUrl: string = '';
 
   // Observable navItem source
   private _authNavStatusSource = new BehaviorSubject<boolean>(false);
   // Observable navItem stream
   authNavStatus$ = this._authNavStatusSource.asObservable();
+  _hubConnection: HubConnection;
 
   private loggedIn = false;
 
@@ -64,7 +66,21 @@ export class UserService extends BaseService {
       .catch(this.handleError);
   }
 
+  subscribeOnline(){
+    let authToken = localStorage.getItem('auth_token');
+
+    this._hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:5001/online", { accessTokenFactory: () => authToken })
+      .build();
+
+    this._hubConnection
+      .start()
+      .then(() => console.log('Connection started!'))
+      .catch(err => console.log('Error while establishing connection :('));
+  }
+
   logout() {
+    this._hubConnection.stop();
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_name');
     this.loggedIn = false;

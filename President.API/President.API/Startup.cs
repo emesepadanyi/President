@@ -109,7 +109,7 @@ namespace President.API
                         // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            ( path.StartsWithSegments("/gameHub") || path.StartsWithSegments("/chat") ))
+                            ( path.StartsWithSegments("/gameHub") || path.StartsWithSegments("/chat") || path.StartsWithSegments("/online")))
                         {
                             // Read the token out of the query string
                             context.Token = accessToken;
@@ -217,6 +217,7 @@ namespace President.API
             {
                 routes.MapHub<ChatHub>("/chat");
                 routes.MapHub<GameHub>("/gameHub");
+                routes.MapHub<OnlineHub>("/online");
             });
             app.UseMvc();
         }

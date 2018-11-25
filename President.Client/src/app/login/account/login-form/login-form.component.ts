@@ -43,12 +43,13 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       this.userService.login(value.email, value.password)
         .finally(() => this.isRequesting = false)
         .subscribe(
-        result => {         
-          if (result) {
-             this.router.navigate(['/dashboard/home']);             
-          }
-        },
-        error => this.errors = error);
+          result => {
+            if (result) {
+              this.userService.subscribeOnline();
+              this.router.navigate(['/dashboard/home']);
+            }
+          },
+          error => this.errors = error);
     }
   }
 }
