@@ -14,7 +14,6 @@ import { ChatMessage } from "../models/chat.message.interface";
 
 export class ChatComponent implements OnInit, OnDestroy {
   private _hubConnection: HubConnection;
-  private user: string;
   messages: ChatMessage[] = [];
   message: string;
 
@@ -22,7 +21,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     let authToken = localStorage.getItem('auth_token');
-    this.user = localStorage.getItem('user_name');
 
     this._hubConnection = new signalR.HubConnectionBuilder()
       .withUrl("https://localhost:5001/chat", { accessTokenFactory: () => authToken })
