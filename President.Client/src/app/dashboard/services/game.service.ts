@@ -6,19 +6,9 @@ import { Card } from '../models/card.interface';
 
 @Injectable()
 export class GameService extends BaseService {
-  baseUrl: string = '';
 
   constructor(private http: Http, private configService: ConfigService) {
     super();
-    this.baseUrl = configService.getApiURI();
-  }
-
-  private getHeader(): Headers{
-    let headers = new Headers();
-    headers.append('Content-Type', 'text/json');
-    let authToken = localStorage.getItem('auth_token');
-    headers.append('Authorization', `Bearer ${authToken}`);
-    return headers;
   }
 
   public sendCard(card: Card) {

@@ -1,9 +1,17 @@
 import { Observable } from 'rxjs/Rx';
-
+import { Headers } from '@angular/http';
 
 export abstract class BaseService {  
     
   constructor() { }
+
+  protected getHeader(): Headers{
+    let headers = new Headers();
+    headers.append('Content-Type', 'text/json');
+    let authToken = localStorage.getItem('auth_token');
+    headers.append('Authorization', `Bearer ${authToken}`);
+    return headers;
+  }
 
   protected handleError(error: any) {
     var applicationError = error.headers.get('Application-Error');

@@ -5,12 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using President.API.Dtos;
 using President.BLL.Services;
 using President.DAL.Context;
-using President.DAL.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace President.API.Controllers
 {
@@ -22,35 +18,22 @@ namespace President.API.Controllers
         private IRelationshipService relatioshipService;
         private IMapper mapper;
 
-        private readonly User user;
-        private readonly PresidentDbContext presidentDbContext;
+        private readonly string userId;
 
-        public FriendsController(
-            IRelationshipService _relatioshipService,
-            IMapper _mapper,
-            IHttpContextAccessor httpContextAccessor,
-            PresidentDbContext _presidentDbContext)
+        public FriendsController(IRelationshipService _relatioshipService, IMapper _mapper, IHttpContextAccessor httpContextAccessor)
         {
             relatioshipService = _relatioshipService;
             mapper = _mapper;
-            presidentDbContext = _presidentDbContext;
 
             ClaimsPrincipal caller = httpContextAccessor.HttpContext.User;
-            user = GetUser(caller);
-        }
-
-        private User GetUser(ClaimsPrincipal caller)
-        {
-            var userID = caller.Claims.Single(c => c.Type == "id");
-            var user = presidentDbContext.Users.Single(dbUser => dbUser.Id == userID.Value);
-            return user;
+            userId = relatioshipService.GetUser(caller);
         }
 
         // GET: friends
         [HttpGet]
         public IActionResult GetFriends()
         {
-            var friends = relatioshipService.GetFriends(user.Id);
+            var friends = relatioshipService.GetFriends(userId);
             var friendDtos = mapper.Map<IList<UserDto>>(friends);
 
             return Ok(friendDtos);
@@ -60,11 +43,10 @@ namespace President.API.Controllers
         [HttpGet("{keyWord}")]
         public IActionResult FindFriends([FromRoute] string keyWord)
         {
-            var users = relatioshipService.FindUsers(user.Id, keyWord);
+            var users = relatioshipService.FindUsers(userId, keyWord);
             var userDtos = mapper.Map<IList<UserDto>>(users);
 
             return Ok(userDtos);
         }
-
     }
 }

@@ -1,10 +1,13 @@
 ﻿using President.DAL.Entities;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace President.BLL.Services
 {
     public interface IRelationshipService
     {
+        string GetUser(ClaimsPrincipal claimsPrincipal);
+
         //GET
         List<User> GetFriends(string userId);
         List<User> GetRequests(string userId);

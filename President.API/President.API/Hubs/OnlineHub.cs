@@ -9,7 +9,7 @@ namespace President.API.Hubs
     [Authorize(Policy = "ApiUser")]
     public class OnlineHub : Hub
     {
-        public static ConcurrentDictionary<string, string> UserList = new ConcurrentDictionary<string, string>();
+        public static ConcurrentDictionary<string, string> UserList { get; } = new ConcurrentDictionary<string, string>();
 
         public override Task OnConnectedAsync()
         {

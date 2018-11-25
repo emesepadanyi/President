@@ -8,5 +8,4 @@ export class ChatService extends BaseService{
   constructor() { 
     super();
   }
-
 }

@@ -15,20 +15,14 @@ import '../../rxjs-operators';
 
 export class DashboardService extends BaseService {
 
-  baseUrl: string = '';
-
   constructor(private http: Http, private configService: ConfigService) {
     super();
-    this.baseUrl = configService.getApiURI();
   }
 
   getHomeDetails(): Observable<HomeDetails> {
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    let authToken = localStorage.getItem('auth_token');
-    headers.append('Authorization', `Bearer ${authToken}`);
+    let headers = this.getHeader();
 
-    return this.http.get(this.baseUrl + "/dashboard/home", { headers })
+    return this.http.get(this.configService.getApiURI() + "/dashboard/home", { headers })
       .map(response => response.json())
       .catch(this.handleError);
   }

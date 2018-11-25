@@ -3,6 +3,7 @@ using President.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace President.BLL.Services
 {
@@ -14,9 +15,16 @@ namespace President.BLL.Services
         {
             context = _context;
         }
-        
+
+        public virtual string GetUser(ClaimsPrincipal caller)
+        {
+            var userID = caller.Claims.Single(c => c.Type == "id");
+            var user = context.Users.Single(dbUser => dbUser.Id == userID.Value);
+            return user.Id;
+        }
+
         //GET
-        virtual public List<User> GetFriends(string userId)
+        public virtual List<User> GetFriends(string userId)
         {
             return context.Relationships.
                 Where((rel) => ((rel.Sender.Id == userId || rel.Receiver.Id == userId) && rel.Status == "accepted")).
@@ -24,7 +32,7 @@ namespace President.BLL.Services
                 ToList();
         }
 
-        virtual public List<User> GetRequests(string userId)
+        public virtual List<User> GetRequests(string userId)
         {
             return context.Relationships.
                 Where((rel) => (rel.Receiver.Id == userId && rel.Status == "requested")).
@@ -32,7 +40,7 @@ namespace President.BLL.Services
                 ToList();
         }
 
-        virtual public List<User> FindUsers(string userId, string keyWord)
+        public virtual List<User> FindUsers(string userId, string keyWord)
         {
             return context.Users.
                 Where(user => user.Id != userId &&
@@ -41,7 +49,7 @@ namespace President.BLL.Services
                           user.UserName.Contains(keyWord))).ToList();
         }
 
-        virtual public bool AcceptRequest(string senderId, string receiverId)
+        public virtual bool AcceptRequest(string senderId, string receiverId)
         {
             context.Relationships.
                 Where(rel => (rel.Sender.Id == senderId && rel.Receiver.Id == receiverId && rel.Status == "requested")).
@@ -51,7 +59,7 @@ namespace President.BLL.Services
             return true;
         }
 
-        virtual public bool RejectRequest(string senderId, string receiverId)
+        public virtual bool RejectRequest(string senderId, string receiverId)
         {
             context.Relationships.
                 Where(rel => (rel.Sender.Id == senderId && rel.Receiver.Id == receiverId && rel.Status == "requested")).
@@ -61,7 +69,7 @@ namespace President.BLL.Services
             return true;
         }
 
-        virtual public bool CreateRequest(string senderId, string receiverId)
+        public virtual bool CreateRequest(string senderId, string receiverId)
         {
             if (context.Relationships.Where(rel =>
                      (rel.Sender.Id == senderId && rel.Receiver.Id == receiverId) ||
@@ -77,7 +85,7 @@ namespace President.BLL.Services
             return false;
         }
 
-        virtual public void DeleteRelationship(string senderId, string receiverId)
+        public virtual void DeleteRelationship(string senderId, string receiverId)
         {
             throw new NotImplementedException();
         }

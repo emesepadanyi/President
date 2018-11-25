@@ -1,25 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from '../../services/base.service';
-import { Http, Headers, Response } from '@angular/http';
+import { Http } from '@angular/http';
 import { ConfigService } from '../../services/config.service';
 import { User } from '../models/user.interface';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class FriendService extends BaseService {
-  baseUrl: string = '';
 
   constructor(private http: Http, private configService: ConfigService) {
     super();
-    this.baseUrl = configService.getApiURI();
-  }
-
-  private getHeader(): Headers{
-    let headers = new Headers();
-    headers.append('Content-Type', 'text/json');
-    let authToken = localStorage.getItem('auth_token');
-    headers.append('Authorization', `Bearer ${authToken}`);
-    return headers;
   }
 
   public getFriends(): Observable<User[]> {
