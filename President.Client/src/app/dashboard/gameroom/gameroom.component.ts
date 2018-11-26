@@ -10,6 +10,7 @@ import { Game } from '../models/game';
 import { NewRound } from '../models/new.round.interface';
 import * as $ from 'jquery';
 import { EndStatistics } from '../models/end.statistics.interface';
+import { UsersStatus } from '../models/users-status.interface';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private switchCards: boolean = false;
   private newRound: NewRound;
   private endStatistics: EndStatistics;
+  usersStatus: UsersStatus;
 
   constructor(private gameService: GameService) { }
 
@@ -39,6 +41,15 @@ export class GameroomComponent implements OnInit, OnDestroy {
       .start()
       .then(() => console.log('Connection started!'))
       .catch(err => console.log('Error while establishing connection :('));
+
+    this._hubConnection.on('UserConnected', (usersStatus: UsersStatus) => {
+      this.usersStatus = usersStatus;
+      console.log(usersStatus);
+      this.game = null;
+      this.switchCards = false;
+      this.newRound = null;
+      this.endStatistics = null;
+    });
 
     this._hubConnection.on('StartGame', (gameStatus: GameStatus) => {
       if(!this.game) this.game = new Game();
@@ -70,6 +81,14 @@ export class GameroomComponent implements OnInit, OnDestroy {
     });
   }
 
+  getConnection(online: boolean): string{
+    if(online){
+      return "Connected! :)";
+    }
+    else{
+      return "Waiting to connect...";
+    }
+  }
   counter(i: number){
     return new Array(i);
   }

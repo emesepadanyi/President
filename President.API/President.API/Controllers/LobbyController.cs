@@ -20,8 +20,8 @@ namespace President.API.Controllers
     [Route("api/[controller]")]
     public class LobbyController : Controller
     {
-        private IRelationshipService relatioshipService;
-        private IMapper mapper;
+        private readonly IRelationshipService relatioshipService;
+        private readonly IMapper mapper;
         private readonly string userId;
 
         public LobbyController(

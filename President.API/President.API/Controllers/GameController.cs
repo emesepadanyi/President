@@ -26,7 +26,7 @@ namespace President.API.Controllers
         private readonly PresidentDbContext presidentDbContext;
         private IHubContext<GameHub, IGameHub> gameContext;
 
-        private static readonly BlockingCollection<OnlineGame> Games = new BlockingCollection<OnlineGame>();
+        public static BlockingCollection<OnlineGame> Games { get; } = new BlockingCollection<OnlineGame>();
 
         public GameController(
             IHttpContextAccessor httpContextAccessor,
@@ -47,7 +47,7 @@ namespace President.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody]string[] userIDs)
+        public IActionResult Post([FromBody]string[] userIDs)
         {
             try
             {
@@ -55,8 +55,6 @@ namespace President.API.Controllers
 
                 OnlineGame game = new OnlineGame(userIDs);
                 Games.Add(game);
-
-                await DealCards(game);
             }
             catch (Exception e)
             {

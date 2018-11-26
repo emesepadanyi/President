@@ -5,6 +5,7 @@ namespace President.API.Hubs
 {
     public interface IGameHub
     {
+        Task UserConnected(UsersStatusViewModel userStatusViewModel);
         Task StartGame(GameViewModel gameViewModel);
         Task PutCard(MoveViewModel moveViewModel);
         Task ResetDeck(string NextPlayer);

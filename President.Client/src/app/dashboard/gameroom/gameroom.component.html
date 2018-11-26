@@ -1,3 +1,9 @@
+<div class="status" *ngIf="usersStatus">
+  <div *ngFor='let status of usersStatus.usersStatus' class="col-sm-5 square alert text-center" [class.alert-danger]="!status.online" [class.alert-success]="status.online">
+    <p><strong>{{status.userName}}</strong></p>
+    <p>{{getConnection(status.online)}}</p>
+  </div>
+</div>
 <div class="gameSpace" *ngIf="game">
   <div *ngIf="switchCards" class="overlay playingCards faceImages">
     <table class="table scorecard table-striped table-dark">
