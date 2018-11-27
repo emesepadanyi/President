@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from '../../services/base.service';
-import { Http, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 import { ConfigService } from '../../services/config.service';
 import { Card } from '../models/card.interface';
 

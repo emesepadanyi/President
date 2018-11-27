@@ -53,6 +53,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
 
     this._hubConnection.on('StartGame', (gameStatus: GameStatus) => {
       if(!this.game) this.game = new Game();
+      this.usersStatus = null;
       this.switchCards = false;
       this.newRound = null;
       this.endStatistics = null;

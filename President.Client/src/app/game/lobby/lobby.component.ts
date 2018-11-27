@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NewGame } from '../models/new-game';
 import { LobbyService } from '../services/lobby.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-lobby',
@@ -15,7 +16,7 @@ export class LobbyComponent implements OnInit {
   newGameForm: NewGame;
   loading: boolean;
 
-  constructor(private lobbyService: LobbyService) {
+  constructor(private lobbyService: LobbyService, private router: Router) {
   }
 
   ngOnInit() {
