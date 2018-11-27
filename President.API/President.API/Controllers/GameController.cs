@@ -47,14 +47,13 @@ namespace President.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]string[] userIDs)
+        public IActionResult Post([FromBody]string[] userNames)
         {
             try
             {
-                //check if the enemies are valid & online & not in other game
+                CheckUsers(userNames);
 
-                OnlineGame game = new OnlineGame(userIDs);
-                Games.Add(game);
+                Games.Add(new OnlineGame(userNames));
             }
             catch (Exception e)
             {
@@ -63,12 +62,25 @@ namespace President.API.Controllers
             return new OkObjectResult("Game started");
         }
 
+        private void CheckUsers(string[] userNames)
+        {
+            var valid = userNames.All(userName =>
+            {
+                return OnlineHub.UserList.Values.Contains(userName) //user is online
+                && !Games.Select(game => game.Players()).Any(players =>  players.Contains(userName)); //user is not in a game
+            });
+
+            if(!valid)
+            {
+                throw new Exception("Not all users are available to play!");
+            }
+        }
+
         [HttpPost("card")]
         public async Task<IActionResult> ThrowCardAsync([FromBody]CardDto cardDto)
         {
             try
             {
-
                 //check if everyone is still online
 
                 var card = new Card() { CardName = cardDto.Name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.Suit) };
@@ -77,7 +89,7 @@ namespace President.API.Controllers
 
                 game.ThrowCard(user.UserName, card);
 
-                await NotifyUsers(cardDto, user, game);
+                await NotifyUsers(cardDto, game);
             }
             catch (Exception e)
             {
@@ -97,7 +109,7 @@ namespace President.API.Controllers
 
                 game.Pass(user.UserName);
 
-                await NotifyUsers(null, user, game);
+                await NotifyUsers(null, game);
             }
             catch (Exception e)
             {
@@ -142,7 +154,7 @@ namespace President.API.Controllers
             }
         }
 
-        private async Task NotifyUsers(CardDto cardDto, User user, OnlineGame game)
+        private async Task NotifyUsers(CardDto cardDto, OnlineGame game)
         {
             var nextUser = game.GetNextUser();
 

@@ -56,11 +56,15 @@ namespace President.API.Hubs
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            var userId = Context.UserIdentifier;
+            var userName = Context.UserIdentifier;
             //check if they are in a game
-            //send the other users notice
-            //remove the game?
-            UserList.TryRemove(Context.ConnectionId, out userId);
+            var game = GameController.Games.ToList().Find(_game => _game.IsUserInTheGame(userName));
+            if (game != null)
+            {
+                //send the other users notice
+                //remove the game?
+            }
+            UserList.TryRemove(Context.ConnectionId, out userName);
             return base.OnDisconnectedAsync(exception);
         }
     }
