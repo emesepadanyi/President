@@ -136,7 +136,7 @@ export class GameroomComponent implements OnInit, OnDestroy {
         selectedCards.push(c);
       });
     this.gameService.switchCards(selectedCards)
-      .subscribe(() => { });
+      .subscribe(() => { this.newRound.wait = true });
   }
 
   ngOnDestroy(): void {
