@@ -19,9 +19,8 @@ import * as signalR from '@aspnet/signalr';
 export class UserService extends BaseService {
   baseUrl: string = '';
 
-  // Observable navItem source
   private _authNavStatusSource = new BehaviorSubject<boolean>(false);
-  // Observable navItem stream
+  public notification = new BehaviorSubject<boolean>(false);
   authNavStatus$ = this._authNavStatusSource.asObservable();
   _hubConnection: HubConnection;
 
@@ -30,8 +29,6 @@ export class UserService extends BaseService {
   constructor(private http: Http, private configService: ConfigService) {
     super();
     this.loggedIn = !!localStorage.getItem('auth_token');
-    // ?? not sure if this the best way to broadcast the status but seems to resolve issue on page refresh where auth status is lost in
-    // header component resulting in authed user nav links disappearing despite the fact user is still logged in
     this._authNavStatusSource.next(this.loggedIn);
     this.baseUrl = configService.getApiURI();
   }
@@ -77,9 +74,15 @@ export class UserService extends BaseService {
       .start()
       .then(() => console.log('Connection started!'))
       .catch(err => console.log('Error while establishing connection :('));
+
+    this._hubConnection.on('Invite', () => {
+      console.log('invitation');
+      this.notification.next(true);
+    });
   }
 
   logout() {
+    this._hubConnection.off('Invite');
     this._hubConnection.stop();
     localStorage.removeItem('auth_token');
     localStorage.removeItem('user_name');
