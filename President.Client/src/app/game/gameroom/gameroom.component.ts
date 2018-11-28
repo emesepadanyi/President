@@ -140,9 +140,9 @@ export class GameroomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._hubConnection.off("StartGame");
-    this._hubConnection.off("PutCard");
-    this._hubConnection.off("ResetDeck");
+    this._hubConnection.off('StartGame');
+    this._hubConnection.off('PutCard');
+    this._hubConnection.off('ResetDeck');
     this._hubConnection.off('WaitForNewRound');
     this._hubConnection.off('GameEnded');
     this._hubConnection.stop();

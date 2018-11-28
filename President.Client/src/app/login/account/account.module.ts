@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule }  from '@angular/forms';
 import { SharedModule }   from '../../modules/shared.module';
  
-import { UserService }  from '../services/user.service';
-
 import { EmailValidator } from '../../directives/email.validator.directive';
 
 import { routing }  from './account.routing';
@@ -19,7 +17,6 @@ import { LoginFormComponent } from './login-form/login-form.component';
     RegistrationFormComponent
     ,EmailValidator
     , LoginFormComponent
-  ],
-  providers: [ UserService ]
+  ]
 })
 export class AccountModule { }

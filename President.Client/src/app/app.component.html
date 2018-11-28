@@ -1,5 +1,7 @@
 <app-header></app-header>
-
+<div *ngIf="notification" class="alert alert-success alert-dismissible" role="alert">
+   <a routerLink="/game/gameroom" class="alert-link" (click)="notification=false">You have been invited to a game!</a>
+</div>
 <div class="container-fluid"> 
 	<router-outlet></router-outlet>
 </div>

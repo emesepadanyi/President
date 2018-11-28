@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace President.API.Hubs
 {
     [Authorize(Policy = "ApiUser")]
-    public class OnlineHub : Hub
+    public class OnlineHub : Hub<IOnlineHub>
     {
         public static ConcurrentDictionary<string, string> UserList { get; } = new ConcurrentDictionary<string, string>();
 

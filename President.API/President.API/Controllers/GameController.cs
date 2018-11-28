@@ -22,19 +22,22 @@ namespace President.API.Controllers
     [Route("api/[controller]")]
     public class GameController : Controller
     {
-        private readonly User user;
         private readonly PresidentDbContext presidentDbContext;
-        private IHubContext<GameHub, IGameHub> gameContext;
+        private readonly IHubContext<GameHub, IGameHub> gameContext;
+        private readonly IHubContext<OnlineHub, IOnlineHub> onlineContext;
+        private readonly User user;
 
         public static BlockingCollection<OnlineGame> Games { get; } = new BlockingCollection<OnlineGame>();
 
         public GameController(
             IHttpContextAccessor httpContextAccessor,
             PresidentDbContext _presidentDbContext,
-            IHubContext<GameHub, IGameHub> _gameContext)
+            IHubContext<GameHub, IGameHub> _gameContext,
+            IHubContext<OnlineHub, IOnlineHub> _onlineContext)
         {
             presidentDbContext = _presidentDbContext;
             gameContext = _gameContext;
+            onlineContext = _onlineContext;
 
             ClaimsPrincipal caller = httpContextAccessor.HttpContext.User;
             user = GetUser(caller);
@@ -47,13 +50,15 @@ namespace President.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]string[] userNames)
+        public async Task<IActionResult> PostAsync([FromBody]string[] userNames)
         {
             try
             {
                 CheckUsers(userNames);
 
                 Games.Add(new OnlineGame(userNames));
+
+                await InviteUsersAsync(userNames);
             }
             catch (Exception e)
             {
@@ -74,6 +79,12 @@ namespace President.API.Controllers
             {
                 throw new Exception("Not all users are available to play!");
             }
+        }
+
+        private async Task InviteUsersAsync(string[] userNames)
+        {
+            userNames = userNames.Reverse().Take(3).ToArray();
+            await onlineContext.Clients.Users(userNames).Invite();
         }
 
         [HttpPost("card")]

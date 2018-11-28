@@ -21,6 +21,7 @@ import {FriendsModule} from './friends/friends.module';
 import {GameModule} from './game/game.module';
 
 import { ConfigService } from './services/config.service';
+import { UserService } from './login/services/user.service';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { ConfigService } from './services/config.service';
     HttpModule,
     routing
   ],
-  providers: [ConfigService, { 
+  providers: [UserService, ConfigService, { 
     provide: XHRBackend, 
     useClass: AuthenticateXHRBackend
   }],

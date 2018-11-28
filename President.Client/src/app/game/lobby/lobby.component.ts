@@ -34,13 +34,20 @@ export class LobbyComponent implements OnInit {
     this.userName = localStorage.getItem("user_name");
   }
 
-  submit({value, valid}: {value: NewGame, valid: boolean}){
+  submit({ value, valid }: { value: NewGame, valid: boolean }) {
     let friends = this.collectFriends(value);
-    if(!this.validate(valid, friends)){
+    if (!this.validate(valid, friends)) {
       return
     }
 
-    debugger;
+    this.lobbyService.createNewRoom(friends)
+      .subscribe(
+        result => {
+          if (result) {
+            this.router.navigate(['/game/gameroom']);
+          }
+        },
+        error => this.error = error);
   }
 
   validate(valid: boolean, friends: string[]): boolean {
