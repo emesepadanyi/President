@@ -1,4 +1,4 @@
-﻿namespace President.API.Dtos
+﻿namespace President.BLL.Dtos
 {
     public class UserDto
     {

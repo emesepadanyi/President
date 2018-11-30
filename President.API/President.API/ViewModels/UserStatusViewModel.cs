@@ -1,5 +1,4 @@
-﻿
-namespace President.API.ViewModels
+﻿namespace President.API.ViewModels
 {
     public class UserStatusViewModel
     {

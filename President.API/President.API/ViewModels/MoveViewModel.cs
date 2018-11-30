@@ -1,4 +1,4 @@
-﻿using President.API.Dtos;
+﻿using President.BLL.Dtos;
 
 namespace President.API.ViewModels
 {

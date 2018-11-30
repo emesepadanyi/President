@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace President.API.Game
+namespace President.BLL.Game
 {
     public static class CardExtensions
     {

@@ -1,9 +1,9 @@
-﻿using President.API.Dtos;
+﻿using President.BLL.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace President.API.Game
+namespace President.BLL.Game
 {
 
     public class OnlineGame
@@ -50,13 +50,13 @@ namespace President.API.Game
 
         public List<string> Players() => OrderOfPlayers;
 
-        public List<ViewModels.Hand> HandStatus(string playerId)
+        public List<HandStatusDto> HandStatus(string playerId)
         {
-            var handStatus = new List<ViewModels.Hand>();
+            var handStatus = new List<HandStatusDto>();
 
             foreach (var hand in Hands)
             {
-                handStatus.Add(new ViewModels.Hand() { UserName = hand.Key, NoCards = hand.Value.Cards.Count, Rank = hand.Value.Rank.ToString()});
+                handStatus.Add(new HandStatusDto() { UserName = hand.Key, NoCards = hand.Value.Cards.Count, Rank = hand.Value.Rank.ToString()});
             }
 
             while(handStatus[0].UserName != playerId)
@@ -102,7 +102,7 @@ namespace President.API.Game
             return user;
         }
 
-        internal string GetRank(string userId) => Hands[userId].Rank.ToString();
+        public string GetRank(string userId) => Hands[userId].Rank.ToString();
 
         public bool IsUserInTheGame(string userName) => (Hands[userName] != null);
 
@@ -124,9 +124,9 @@ namespace President.API.Game
 
         private void ValidateThrowing(string userName, Card card)
         {
-            if (OrderOfPlayers[OrderOfPlayers.Count-1] != userName) throw new System.Exception("Not your turn!");
-            if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
-            if (ThrownCards.Count != 0 && !GameLogic.IsValidMove(ThrownCards[0], card)) throw new System.Exception("You have to top the previous card!");
+            if (OrderOfPlayers[OrderOfPlayers.Count-1] != userName) throw new Exception("Not your turn!");
+            if (!Hands[userName].Active) throw new Exception("You already passed once!");
+            if (ThrownCards.Count != 0 && !GameLogic.IsValidMove(ThrownCards[0], card)) throw new Exception("You have to top the previous card!");
         }
 
         public void Switch(string userName, List<Card> cards)
@@ -207,8 +207,8 @@ namespace President.API.Game
 
         private void ValidatePassing(string userName)
         {
-            if (OrderOfPlayers[this.OrderOfPlayers.Count - 1] != userName) throw new System.Exception("Not your turn!");
-            if (!Hands[userName].Active) throw new System.Exception("You already passed once!");
+            if (OrderOfPlayers[this.OrderOfPlayers.Count - 1] != userName) throw new Exception("Not your turn!");
+            if (!Hands[userName].Active) throw new Exception("You already passed once!");
         }
 
         private void SetUserInactive(string userName) => Hands[userName].Active = false;

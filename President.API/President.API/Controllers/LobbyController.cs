@@ -2,17 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using President.API.Dtos;
 using President.API.Helpers;
 using President.API.Hubs;
 using President.BLL.Services;
-using President.DAL.Context;
-using President.DAL.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace President.API.Controllers
 {

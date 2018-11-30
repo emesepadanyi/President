@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace President.API.Dtos
+namespace President.BLL.Dtos
 {
     public class ScoreDto
     {

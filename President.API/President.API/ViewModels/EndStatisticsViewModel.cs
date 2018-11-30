@@ -1,4 +1,4 @@
-﻿using President.API.Dtos;
+﻿using President.BLL.Dtos;
 using President.DAL.Entities;
 using System.Collections.Generic;
 

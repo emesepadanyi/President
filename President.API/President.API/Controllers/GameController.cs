@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using President.API.Dtos;
-using President.API.Game;
+using President.BLL.Dtos;
+using President.BLL.Game;
 using President.API.Helpers;
 using President.API.Hubs;
 using President.API.ViewModels;

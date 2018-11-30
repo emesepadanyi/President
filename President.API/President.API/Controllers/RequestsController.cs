@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using President.API.Dtos;
+using President.BLL.Dtos;
 using President.BLL.Services;
-using President.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;

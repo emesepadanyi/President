@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace President.API.Game
+namespace President.BLL.Game
 {
     public class Hand
     {

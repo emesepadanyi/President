@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using President.API.Dtos;
+using President.BLL.Dtos;
 using President.DAL.Entities;
 
-namespace President.API.Mapping
+namespace President.BLL.Mapping
 {
     public class AutoMapperProfile : Profile
     {

@@ -1,4 +1,4 @@
-﻿namespace President.API.Game
+﻿namespace President.BLL.Game
 {
     public class Card
     {

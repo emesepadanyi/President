@@ -1,5 +1,4 @@
-﻿using President.API.Dtos;
-using President.API.Game;
+﻿using President.BLL.Dtos;
 using System.Collections.Generic;
 
 namespace President.API.ViewModels

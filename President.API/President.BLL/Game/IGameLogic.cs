@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace President.API.Game
+namespace President.BLL.Game
 {
     public interface IGameLogic
     {
