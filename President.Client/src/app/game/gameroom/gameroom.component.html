@@ -24,36 +24,41 @@
         </tr>
       </tbody>
     </table>
-    <div class="alert alert-info callToAction" role="alert">
-      {{getCallToActionString()}}
-    </div>
-    <ul class="gametable">
-      <label *ngFor="let card of newRound.cards" for="{{card.name | lowercase}}{{card.suit}}" class="card rank-{{card.name | lowercase}} {{card.suit}}"
-        [class.activePlayer]="!newRound.wait">
-        <span class="rank">{{card.name}}</span>
-        <div ngSwitch="{{card.suit}}">
-          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
-          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
-          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
-          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+    <div class="row">
+      <div class="switchButton">
+        <button type="button" class="btn btn-warning" [class.invisible]="newRound.wait" (click)="sendSwitchableCards()">
+          Switch
+        </button>
+      </div>
+      <div class="cardslayout">
+        <div class="alert alert-info" role="alert">
+          {{getCallToActionString()}}
         </div>
-        <input class="selectableCards" *ngIf="!newRound.wait" type="checkbox" id="{{card.name | lowercase}}{{card.suit}}" value="select" />
-      </label>
-      <label *ngFor="let card of newRound.switchedCards" for="{{card.name | lowercase}}{{card.suit}}" class="disabledCard card rank-{{card.name | lowercase}} {{card.suit}}"
-        [class.activePlayer]="!newRound.wait">
-        <span class="rank">{{card.name}}</span>
-        <div ngSwitch="{{card.suit}}">
-          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
-          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
-          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
-          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
-        </div>
-      </label>
-    </ul>
-    <div class="switchButton">
-      <button type="button" class="btn btn-warning" [class.invisible]="newRound.wait" (click)="sendSwitchableCards()">
-        Switch
-      </button>
+        <ul>
+          <label *ngFor="let card of newRound.cards" for="{{card.name | lowercase}}{{card.suit}}" class="card rank-{{card.name | lowercase}} {{card.suit}}"
+            [class.activePlayer]="!newRound.wait">
+            <span class="rank">{{card.name}}</span>
+            <div ngSwitch="{{card.suit}}">
+              <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+              <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+              <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+              <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+            </div>
+            <input class="selectableCards" *ngIf="!newRound.wait" type="checkbox" id="{{card.name | lowercase}}{{card.suit}}"
+              value="select" />
+          </label>
+          <label *ngFor="let card of newRound.switchedCards" for="{{card.name | lowercase}}{{card.suit}}" class="disabledCard card rank-{{card.name | lowercase}} {{card.suit}}"
+            [class.activePlayer]="!newRound.wait">
+            <span class="rank">{{card.name}}</span>
+            <div ngSwitch="{{card.suit}}">
+              <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+              <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+              <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+              <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+            </div>
+          </label>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="rounds">
