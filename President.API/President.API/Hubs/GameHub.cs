@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using President.API.Controllers;
 using President.API.ViewModels;
+using President.BLL.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,16 +16,23 @@ namespace President.API.Hubs
     public class GameHub : Hub<IGameHub>
     {
         public static ConcurrentDictionary<string, string> UserList { get; } = new ConcurrentDictionary<string, string>();
+        private IGameService gameService;
 
+        public GameHub(IGameService _gameService)
+        {
+            gameService = _gameService;
+        }
         public override Task OnConnectedAsync()
         {
             var userName = Context.UserIdentifier;
             UserList.TryAdd(Context.ConnectionId, userName);
 
-            var game = GameController.Games.ToList().Find(_game => _game.IsUserInTheGame(userName));
+            //this could be better
+            var game = GameService.Games.ToList().Find(_game => _game.IsUserInTheGame(userName));
+
             if(game != null)
             {
-                UsersStatusViewModel usersStatusViewModel = getUsersStatus(game.Players());
+                UsersStatusViewModel usersStatusViewModel = GetUsersStatus(game.Players());
 
                 Clients.Users(game.Players()).UserConnected(usersStatusViewModel);
 
@@ -43,7 +51,7 @@ namespace President.API.Hubs
             return base.OnConnectedAsync();
         }
 
-        private UsersStatusViewModel getUsersStatus(List<string> players)
+        private UsersStatusViewModel GetUsersStatus(List<string> players)
         {
             List<UserStatusViewModel> usersStatus = new List<UserStatusViewModel>();
             players.ForEach(player =>
@@ -57,13 +65,10 @@ namespace President.API.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             var userName = Context.UserIdentifier;
-            //check if they are in a game
-            var game = GameController.Games.ToList().Find(_game => _game.IsUserInTheGame(userName));
-            if (game != null)
-            {
-                //send the other users notice
-                //remove the game?
-            }
+
+            List<string> userNames = gameService.UserLoggedOff(userName);
+            //userNames.ForEach(user => { /*decide what to do*/ });
+
             UserList.TryRemove(Context.ConnectionId, out userName);
             return base.OnDisconnectedAsync(exception);
         }

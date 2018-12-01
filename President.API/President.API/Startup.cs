@@ -175,6 +175,7 @@ namespace President.API
             });
 
             services.AddScoped<IRelationshipService, RelationshipService>();
+            services.AddScoped<IGameService, GameService>();
 
             services.AddSignalR();
         }

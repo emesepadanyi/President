@@ -7,14 +7,11 @@ using President.BLL.Game;
 using President.API.Helpers;
 using President.API.Hubs;
 using President.API.ViewModels;
-using President.DAL.Context;
-using President.DAL.Entities;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using President.BLL.Services;
 
 namespace President.API.Controllers
 {
@@ -22,31 +19,22 @@ namespace President.API.Controllers
     [Route("api/[controller]")]
     public class GameController : Controller
     {
-        private readonly PresidentDbContext presidentDbContext;
+        private readonly IGameService gameService;
         private readonly IHubContext<GameHub, IGameHub> gameContext;
         private readonly IHubContext<OnlineHub, IOnlineHub> onlineContext;
-        private readonly User user;
-
-        public static BlockingCollection<OnlineGame> Games { get; } = new BlockingCollection<OnlineGame>();
+        private readonly string userName;
 
         public GameController(
             IHttpContextAccessor httpContextAccessor,
-            PresidentDbContext _presidentDbContext,
+            IGameService _gameService,
             IHubContext<GameHub, IGameHub> _gameContext,
             IHubContext<OnlineHub, IOnlineHub> _onlineContext)
         {
-            presidentDbContext = _presidentDbContext;
+            gameService = _gameService;
             gameContext = _gameContext;
             onlineContext = _onlineContext;
 
-            ClaimsPrincipal caller = httpContextAccessor.HttpContext.User;
-            user = GetUser(caller);
-        }
-        private User GetUser(ClaimsPrincipal caller)
-        {
-            var userID = caller.Claims.Single(c => c.Type == "id");
-            var user = presidentDbContext.Users.Single(dbUser => dbUser.Id == userID.Value);
-            return user;
+            userName = gameService.GetUserName(httpContextAccessor.HttpContext.User);
         }
 
         [HttpPost]
@@ -56,7 +44,7 @@ namespace President.API.Controllers
             {
                 CheckUsers(userNames);
 
-                Games.Add(new OnlineGame(userNames));
+                gameService.AddGame(new OnlineGame(userNames));
 
                 await InviteUsersAsync(userNames);
             }
@@ -72,7 +60,7 @@ namespace President.API.Controllers
             var valid = userNames.All(userName =>
             {
                 return OnlineHub.UserList.Values.Contains(userName) //user is online
-                && !Games.Select(game => game.Players()).Any(players =>  players.Contains(userName)); //user is not in a game
+                && !gameService.UserIsInAnyGame(userName);
             });
 
             if(!valid)
@@ -92,13 +80,7 @@ namespace President.API.Controllers
         {
             try
             {
-                //check if everyone is still online
-
-                var card = new Card() { CardName = cardDto.Name.ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.Suit) };
-
-                var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
-
-                game.ThrowCard(user.UserName, card);
+                var game = gameService.ThrowCard(cardDto, userName);
 
                 await NotifyUsers(cardDto, game);
             }
@@ -114,11 +96,7 @@ namespace President.API.Controllers
         {
             try
             {
-                //check if everyone is still online
-
-                var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
-
-                game.Pass(user.UserName);
+                var game = gameService.Pass(userName);
 
                 await NotifyUsers(null, game);
             }
@@ -130,18 +108,11 @@ namespace President.API.Controllers
         }
 
         [HttpPost("switch")]
-        public async Task<IActionResult> SwitchAsync([FromBody]List<CardDto> cardDots)
+        public async Task<IActionResult> SwitchAsync([FromBody]List<CardDto> cardDtos)
         {
             try
             {
-                //check if everyone is still online
-
-                var game = Games.ToList().Find(_game => _game.IsUserInTheGame(user.UserName));
-
-                var cards = new List<Card>();
-                cardDots.ForEach(cardDto => cards.Add(new Card() { CardName = cardDto.Name.ToUpper().ToCardNameEnum(), Suit = Enum.Parse<Suit>(cardDto.Suit) }));
-
-                game.Switch(user.UserName, cards);
+                var game = gameService.Switch(userName, cardDtos);
 
                 if (game.IsSwitchingOver())
                 {
@@ -181,16 +152,12 @@ namespace President.API.Controllers
                     System.Threading.Thread.Sleep(1000);
 
                     var winners = game.Winners();
-                    foreach (var userId in game.Players())
+                    var stats = gameService.SaveStats(game, winners, game.Players());
+
+                    foreach (var userName in game.Players())
                     {
-                        var stats = SaveStats(game, winners, userId);
-
-                        await gameContext.Clients.User(userId).GameEnded(new EndStatisticsViewModel() { ScoreCard = game.GetScoreCard(), Stats = stats });
+                        await gameContext.Clients.User(userName).GameEnded(new EndStatisticsViewModel() { ScoreCard = game.GetScoreCard(), Stats = stats.First(stat => stat.User.UserName == userName) });
                     }
-
-                    presidentDbContext.SaveChanges();
-
-                    Games.TryTake(out game);
                 }
                 else
                 {
@@ -220,22 +187,6 @@ namespace President.API.Controllers
                 }
                 game.ResetActivity();
             }
-        }
-
-        private PlayerStatistics SaveStats(OnlineGame game, IEnumerable<string> winners, string userId)
-        {
-            var stats = presidentDbContext.PlayerStatistics.SingleOrDefault(s => s.User.UserName.Equals(userId));
-            if (stats == null)
-            {
-                var usr = presidentDbContext.Users.Single(dbUser => dbUser.UserName == userId);
-                stats = new PlayerStatistics() { User = usr, GamesPlayed = 0, SumPointsEarned = 0, TimesWon = 0 };
-                presidentDbContext.Add(stats);
-            }
-            stats.GamesPlayed += 1;
-            stats.SumPointsEarned += game.GetTotalPoints(userId);
-            if (winners.Contains(userId)) stats.TimesWon += 1;
-
-            return stats;
         }
     }
 }
