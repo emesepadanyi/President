@@ -1,5 +1,6 @@
 <div class="status" *ngIf="usersStatus">
-  <div *ngFor='let status of usersStatus.usersStatus' class="col-sm-5 square alert text-center" [class.alert-danger]="!status.online" [class.alert-success]="status.online">
+  <div *ngFor='let status of usersStatus.usersStatus' class="col-sm-5 square alert text-center" [class.alert-danger]="!status.online"
+    [class.alert-success]="status.online">
     <p><strong>{{status.userName}}</strong></p>
     <p>{{getConnection(status.online)}}</p>
   </div>
@@ -56,48 +57,57 @@
     </div>
   </div>
   <div class="rounds">
-    Round: {{game.round}}/10
+    <strong>Round: {{game.round}}/10</strong>
   </div>
-  <div *ngFor='let enemyHand of game.hands' class="enemyHand playingCards faceImages rotateHand">
-    <ul class="hand">
-      <li *ngFor='let in of counter(enemyHand.noCards)' class="card back">*</li>
-    </ul>
-    <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.userName}}</div>
-    <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.rank}}</div>
+  <div class="row">
+    <div *ngFor='let enemyHand of game.hands.reverse()' class="col-sm-4 enemyHand playingCards faceImages rotateHand">
+      <ul class="hand">
+        <li *ngFor='let in of counter(enemyHand.noCards)' class="card back">*</li>
+      </ul>
+      <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.userName}}</div>
+      <div>{{enemyHand.rank}}</div>
+    </div>
   </div>
-  <div class="ownHand playingCards faceImages rotateHand">
-    <div [class.activePlayer]="isActivePlayer(user)">{{user}}</div>
-    <div [class.activePlayer]="isActivePlayer(user)">{{game.ownRank}}</div>
-    <ul class="hand">
-      <li *ngFor="let card of game.cards" class="card rank-{{card.name | lowercase}} {{card.suit}}" [class.activePlayer]="isActivePlayer(user)"
-        (click)="isActivePlayer(user) && clickedOn(card)">
-        <span class="rank">{{card.name}}</span>
-        <div ngSwitch="{{card.suit}}">
-          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
-          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
-          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
-          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
-        </div>
-      </li>
-    </ul>
+  <div class="row">
+    <div class="throwing_deck playingCards faceImages">
+      <ul class="deck">
+        <li *ngFor="let card of game.deck" class="card rank-{{card.name | lowercase}} {{card.suit}}" (click)="clickedOn(card)">
+          <span class="rank">{{card.name}}</span>
+          <div ngSwitch="{{card.suit}}">
+            <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+            <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+            <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+            <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
-  <div class="passButton">
-    <button type="button" class="btn btn-warning" [class.invisible]="!isActivePlayer(user)" [attr.disabled]="isActivePlayer(user)? null:true" (click)="pass()">
-      Pass
-    </button>
-  </div>
-  <div class="throwing_deck playingCards faceImages">
-    <ul class="deck">
-      <li *ngFor="let card of game.deck" class="card rank-{{card.name | lowercase}} {{card.suit}}" (click)="clickedOn(card)">
-        <span class="rank">{{card.name}}</span>
-        <div ngSwitch="{{card.suit}}">
-          <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
-          <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
-          <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
-          <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
-        </div>
-      </li>
-    </ul>
+  <div class="row">
+    <div class="stuff row">
+      <div class="passButton">
+        <button type="button" class="btn btn-warning" [class.invisible]="!isActivePlayer(user)" [attr.disabled]="isActivePlayer(user)? null:true"
+          (click)="pass()">
+          Pass
+        </button>
+      </div>
+      <div class="ownHand playingCards faceImages rotateHand">
+        <div [class.activePlayer]="isActivePlayer(user)">{{user}}</div>
+        <div [class.activePlayer]="isActivePlayer(user)">{{game.ownRank}}</div>
+        <ul class="hand">
+          <li *ngFor="let card of game.cards" class="card rank-{{card.name | lowercase}} {{card.suit}}"
+            [class.activePlayer]="isActivePlayer(user)" (click)="isActivePlayer(user) && clickedOn(card)">
+            <span class="rank">{{card.name}}</span>
+            <div ngSwitch="{{card.suit}}">
+              <span *ngSwitchCase="'clubs'" class="suit">&clubs;</span>
+              <span *ngSwitchCase="'spades'" class="suit">&spades;</span>
+              <span *ngSwitchCase="'diams'" class="suit">&diams;</span>
+              <span *ngSwitchCase="'hearts'" class="suit">&hearts;</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 <div class="gameSpace endGame" *ngIf="endStatistics">

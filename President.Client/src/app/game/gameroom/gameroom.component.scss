@@ -60,29 +60,8 @@
         padding: 20px;
     }
 
-    .ownHand{
-        position: absolute;
-        width: min-content;
-        bottom: 0;
-        left: 40%;
-
-        li.activePlayer:hover{
-            bottom: 1em;
-            cursor: pointer;
-        }
-    }
-
-    .passButton{
-       position: absolute;
-       bottom: 40px;
-       left: 300px;
-    }
-
     .enemyHand{
-        width: min-content;
-        float: right;
         padding: 0px 80px 0px 80px;
-
 
         .activePlayer{
             color: brown;
@@ -90,13 +69,21 @@
     }
 
     .throwing_deck{
-        position: absolute;
-        width: min-content;
-        left: 50%;
-        top: calc(50vh - 140px);
-        top: -o-calc(50vh - 140px); /* opera */
-        top: -webkit-calc(50vh - 140px); /* google, safari */
-        top: -moz-calc(50vh - 140px); /* firefox */
+        margin: auto;
+    }
+
+    .stuff{
+        margin: auto;
+        .passButton{
+            margin-bottom: auto;
+            margin-top: auto;
+        }
+        .ownHand{
+            li.activePlayer:hover{
+                bottom: 1em;
+                cursor: pointer;
+            }
+        }
     }
 
     &.endGame{
