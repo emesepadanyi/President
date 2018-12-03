@@ -1,8 +1,8 @@
-﻿using President.API.Tests.MockClasses;
+﻿using President.Tests.MockClasses;
 using System;
 using Xunit;
 
-namespace President.API.Tests.ServicesTests
+namespace President.Tests.ServicesTests
 {
     public class RelationshipServiceTests
     {

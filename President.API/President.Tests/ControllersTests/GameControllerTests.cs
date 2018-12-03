@@ -10,18 +10,18 @@ using System;
 using System.Security.Claims;
 using Xunit;
 
-namespace President.API.Tests.ControllersTests
+namespace President.Tests.ControllersTests
 {
     public class GameControllerTests
     {
         private GameController GameController { get; set; }
         public GameControllerTests()
         {
-            GameController = new GameController(
-                MockHttpContextAccessor(),
-                MockPresidentDbContext(),
-                MockGameContext()
-            );
+            //GameController = new GameController(
+            //    MockHttpContextAccessor(),
+            //    MockPresidentDbContext(),
+            //    MockGameContext()
+            //);
         }
 
         private IHttpContextAccessor MockHttpContextAccessor()

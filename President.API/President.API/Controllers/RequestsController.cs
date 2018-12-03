@@ -48,9 +48,9 @@ namespace President.API.Controllers
             try
             {
                 relatioshipService.AcceptRequest(sender.Id, userId);
-                return Ok();
+                return Ok("Request accepted");
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
                 return NotFound();
             }

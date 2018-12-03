@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "President.BLL", "President.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "President.DAL", "President.DAL\President.DAL.csproj", "{66706129-0315-4072-A32F-BCEEF1C7B10A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "President.API.Tests", "President.API.Tests\President.API.Tests.csproj", "{21BF185D-7544-4F6C-87BE-1DB67028BD13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "President.Tests", "President.Tests\President.Tests.csproj", "{21BF185D-7544-4F6C-87BE-1DB67028BD13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

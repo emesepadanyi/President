@@ -42,11 +42,23 @@ namespace President.BLL.Services
 
         public virtual List<User> FindUsers(string userId, string keyWord)
         {
-            return context.Users.
+            var finalUsers = new List<User>();
+            context.Users.
                 Where(user => user.Id != userId &&
                           (user.FirstName.Contains(keyWord) ||
                           user.LastName.Contains(keyWord) ||
-                          user.UserName.Contains(keyWord))).ToList();
+                          user.UserName.Contains(keyWord))).ToList()
+                .ForEach(user =>
+                {
+                    if (context.Relationships.Where(rel =>
+                            (rel.Sender.Id == userId && rel.Receiver.Id == user.Id) ||
+                            (rel.Sender.Id == user.Id && rel.Receiver.Id == userId)).FirstOrDefault() == null)
+                    {
+                        finalUsers.Add(user);
+                    }
+                });
+
+            return finalUsers;
         }
 
         public virtual bool AcceptRequest(string senderId, string receiverId)

@@ -150,20 +150,23 @@ namespace President.BLL.Game
             Hands[userName].Cards.AddRange(Hands[userName].SwitchedCards);
             Hands[userName].Cards = Hands[userName].Cards.OrderBy(card => card.CardName).ToList();
 
-            switch (Hands[userName].Rank)
+            List<Card> enemyCards = getEnemyCards(Hands[userName].Rank);
+            enemyCards.AddRange(cards);
+            enemyCards = enemyCards.OrderBy(card => card.CardName).ToList();
+        }
+
+        private List<Card> getEnemyCards(Rank? rank)
+        {
+            switch (rank)
             {
                 case (Rank.President):
-                    var enemyCards = Hands.ToList()
+                    return Hands.ToList()
                         .Find(hand => hand.Value.Rank == Rank.Scum).Value.Cards;
-                    enemyCards.AddRange(cards);
-                    enemyCards.OrderBy(card => card.CardName).ToList();
-                    break;
                 case (Rank.VicePresident):
-                    enemyCards = Hands.ToList()
+                    return Hands.ToList()
                         .Find(hand => hand.Value.Rank == Rank.ViceScum).Value.Cards;
-                    enemyCards.AddRange(cards);
-                    enemyCards.OrderBy(card => card.CardName).ToList();
-                    break;
+                default:
+                    return null;
             }
         }
 

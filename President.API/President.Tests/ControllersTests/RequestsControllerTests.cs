@@ -2,26 +2,22 @@
 using AutoMapper.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using President.API.Controllers;
-using President.API.Dtos;
-using President.API.Mapping;
-using President.API.Tests.MockClasses;
+using President.BLL.Dtos;
+using President.BLL.Mapping;
+using President.Tests.MockClasses;
 using President.BLL.Services;
-using President.DAL.Context;
 using President.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Xunit;
 
-namespace President.API.Tests.ControllersTests
+namespace President.Tests.ControllersTests
 {
     public class RequestsControllerTests
     {
-        //GetRequests, AcceptRequest
-
         const string returnsValue = "1";
         const string returnsNull = "2";
         private static RequestsController happyRequestsController;
@@ -34,8 +30,7 @@ namespace President.API.Tests.ControllersTests
                 {
                     happyRequestsController = new RequestsController(
                         HappyMockHttpContextAccessor(),
-                        mockRelationshipService(),
-                        MockPresidentDbContext(),
+                        MockRelationshipService(),
                         MapperInstance
                     );
                 }
@@ -53,8 +48,7 @@ namespace President.API.Tests.ControllersTests
                 {
                     sadRequestsController = new RequestsController(
                         SadMockHttpContextAccessor(),
-                        mockRelationshipService(),
-                        MockPresidentDbContext(),
+                        MockRelationshipService(),
                         MapperInstance
                     );
                 }
@@ -73,52 +67,51 @@ namespace President.API.Tests.ControllersTests
 
         [Fact]
         public void GetRequests_ReturnNotFound()
-        {//returnsNull
+        {
             IActionResult actual = SadRequestsController.Requests();
-            Assert.Equal(typeof(NotFoundResult), actual.GetType());
+            Assert.Equal(typeof(OkObjectResult), actual.GetType());
+            Assert.Empty((IList<UserDto>)((OkObjectResult)actual).Value);
         }
 
         [Fact]
         public void AcceptRequest_ReturnOk()
         {
-            //returnsValue
-            IActionResult actual = HappyRequestsController.AcceptRequest(returnsValue);
-            Assert.Equal(typeof(OkResult), actual.GetType());
+            IActionResult actual = HappyRequestsController.AcceptRequest(new UserDto() { Id = returnsValue });
+            Assert.Equal(typeof(OkObjectResult), actual.GetType());
         }
 
         [Fact]
         public void AcceptRequest_ReturnNotFound()
-        {//returnsNull
-            IActionResult actual = SadRequestsController.AcceptRequest(returnsNull);
+        {
+            IActionResult actual = SadRequestsController.AcceptRequest(new UserDto() { Id = returnsNull });
             Assert.Equal(typeof(NotFoundResult), actual.GetType());
         }
 
         [Fact]
         public void RejectRequest_ReturnOk()
         {
-            //returns
-            IActionResult actual = HappyRequestsController.RejectRequest(returnsValue);
+            IActionResult actual = HappyRequestsController.RejectRequest(new UserDto() { Id = returnsValue });
             Assert.Equal(typeof(OkResult), actual.GetType());
         }
 
         [Fact]
         public void RejectRequest_ReturnNotFound()
         {
-            IActionResult actual = SadRequestsController.RejectRequest(returnsNull);
+            IActionResult actual = SadRequestsController.RejectRequest(new UserDto() { Id = returnsNull });
             Assert.Equal(typeof(NotFoundResult), actual.GetType());
         }
 
         [Fact]
         public void CreateRequest_ReturnOk()
         {
-            IActionResult actual = HappyRequestsController.CreateRequest(returnsValue);
+            IActionResult actual = HappyRequestsController.CreateRequest(new UserDto() { Id = returnsValue });
             Assert.Equal(typeof(OkResult), actual.GetType());
         }
 
         [Fact]
         public void CreateRequest_ReturnNotFound()
         {
-            IActionResult actual = SadRequestsController.CreateRequest(returnsNull);
+            IActionResult actual = SadRequestsController.CreateRequest(new UserDto() { Id = returnsNull });
             Assert.Equal(typeof(NotFoundResult), actual.GetType());
         }
 
@@ -139,11 +132,11 @@ namespace President.API.Tests.ControllersTests
             }
         }
 
-        static private RelationshipService mockRelationshipService()
+        static private RelationshipService MockRelationshipService()
         {
-            var mock = new Mock<RelationshipServiceWithMockDb>();
+            var mock = new Mock<RelationshipServiceWithMockDb>() { CallBase = true };
             mock.Setup(service => service.GetRequests(returnsValue)).Returns(new List<User>() { new User() { FirstName = "Eszter" } });
-            mock.Setup(service => service.GetRequests(returnsNull)).Returns((List<User>)null);
+            mock.Setup(service => service.GetRequests(returnsNull)).Returns(new List<User>());
 
             mock.Setup(service => service.AcceptRequest(returnsValue, returnsValue)).Returns(true);
             mock.Setup(service => service.AcceptRequest(returnsNull, returnsNull)).Throws<InvalidOperationException>();
@@ -182,20 +175,6 @@ namespace President.API.Tests.ControllersTests
                 .Returns(caller);
 
             return mockHttpContextAccessor.Object;
-        }
-        private PresidentDbContext MockPresidentDbContext()
-        {
-            var options = new DbContextOptionsBuilder<PresidentDbContext>()
-                             .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                             .Options;
-            var context = new PresidentDbContext(options);
-
-            context.Users.Add(new User { FirstName = "Fanni", Id = "1" });
-            context.Users.Add(new User { FirstName = "Eszter", Id = "2" });
-
-            context.SaveChanges();
-
-            return context;
         }
     }
 }

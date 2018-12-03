@@ -4,7 +4,7 @@ using President.DAL.Context;
 using President.DAL.Entities;
 using System;
 
-namespace President.API.Tests.MockClasses
+namespace President.Tests.MockClasses
 {
     public class RelationshipServiceWithMockDb : RelationshipService
     {
