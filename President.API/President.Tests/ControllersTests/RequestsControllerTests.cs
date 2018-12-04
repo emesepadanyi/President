@@ -31,7 +31,7 @@ namespace President.Tests.ControllersTests
                     happyRequestsController = new RequestsController(
                         HappyMockHttpContextAccessor(),
                         MockRelationshipService(),
-                        MapperInstance
+                        MapperConfig.MapperInstance
                     );
                 }
                 return happyRequestsController;
@@ -49,7 +49,7 @@ namespace President.Tests.ControllersTests
                     sadRequestsController = new RequestsController(
                         SadMockHttpContextAccessor(),
                         MockRelationshipService(),
-                        MapperInstance
+                        MapperConfig.MapperInstance
                     );
                 }
                 return sadRequestsController;
@@ -62,7 +62,7 @@ namespace President.Tests.ControllersTests
             IActionResult actual = HappyRequestsController.Requests();
 
             Assert.Equal(typeof(OkObjectResult), actual.GetType());
-            Assert.Equal(1, ((IList<UserDto>)((OkObjectResult)actual).Value).Count);
+            Assert.Single((IList<UserDto>)((OkObjectResult)actual).Value);
         }
 
         [Fact]
@@ -113,23 +113,6 @@ namespace President.Tests.ControllersTests
         {
             IActionResult actual = SadRequestsController.CreateRequest(new UserDto() { Id = returnsNull });
             Assert.Equal(typeof(NotFoundResult), actual.GetType());
-        }
-
-        private static string mapper;
-
-        public IMapper MapperInstance
-        {
-            get
-            {
-                if(mapper == null)
-                {
-                    var mappings = new MapperConfigurationExpression();
-                    mappings.AddProfile<AutoMapperProfile>();
-                    Mapper.Initialize(mappings);
-                    mapper = "ready";
-                }
-                return Mapper.Instance;
-            }
         }
 
         static private RelationshipService MockRelationshipService()

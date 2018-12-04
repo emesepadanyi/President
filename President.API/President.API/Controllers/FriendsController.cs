@@ -19,7 +19,7 @@ namespace President.API.Controllers
 
         private readonly string userId;
 
-        public FriendsController(IRelationshipService _relatioshipService, IMapper _mapper, IHttpContextAccessor httpContextAccessor)
+        public FriendsController(IHttpContextAccessor httpContextAccessor, IRelationshipService _relatioshipService, IMapper _mapper)
         {
             relatioshipService = _relatioshipService;
             mapper = _mapper;
@@ -30,7 +30,7 @@ namespace President.API.Controllers
 
         // GET: friends
         [HttpGet]
-        public IActionResult GetFriends()
+        public virtual IActionResult GetFriends()
         {
             var friends = relatioshipService.GetFriends(userId);
             var friendDtos = mapper.Map<IList<UserDto>>(friends);
@@ -40,7 +40,7 @@ namespace President.API.Controllers
 
         // GET: friends/Anna
         [HttpGet("{keyWord}")]
-        public IActionResult FindFriends([FromRoute] string keyWord)
+        public virtual IActionResult FindFriends([FromRoute] string keyWord)
         {
             var users = relatioshipService.FindUsers(userId, keyWord);
             var userDtos = mapper.Map<IList<UserDto>>(users);
