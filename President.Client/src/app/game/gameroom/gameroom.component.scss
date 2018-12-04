@@ -15,7 +15,7 @@
     overflow: hidden;
     width: 100vw;
     right: 15px;
-    background-color: aqua;
+    background-color: forestgreen;
     height: calc(100vh - 56px);
     height: -o-calc(100vh - 56px); /* opera */
     height: -webkit-calc(100vh - 56px); /* google, safari */
@@ -56,15 +56,22 @@
     }
 
     > .rounds{
-        float: right;
+        position: fixed;
         padding: 20px;
+        right: 0;
     }
 
     .enemyHand{
-        padding: 0px 80px 0px 80px;
-
-        .activePlayer{
-            color: brown;
+        margin: auto;
+        margin-top: 1em;
+        width: auto;
+        border-style: solid;
+        max-width: 33.333333%;
+        &.activePlayer{
+            background: lightgreen;
+        }
+        .mytext{
+            height: 1.5em;
         }
     }
 

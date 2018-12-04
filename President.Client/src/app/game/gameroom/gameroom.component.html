@@ -61,17 +61,17 @@
       </div>
     </div>
   </div>
-  <div class="rounds">
-    <strong>Round: {{game.round}}/10</strong>
-  </div>
   <div class="row">
-    <div *ngFor='let enemyHand of game.hands.reverse()' class="col-sm-4 enemyHand playingCards faceImages rotateHand">
+    <div *ngFor='let enemyHand of game.hands.reverse()' class="enemyHand playingCards faceImages rotateHand text-center" [class.activePlayer]="isActivePlayer(enemyHand.userName)">
       <ul class="hand">
         <li *ngFor='let in of counter(enemyHand.noCards)' class="card back">*</li>
       </ul>
-      <div [class.activePlayer]="isActivePlayer(enemyHand.userName)">{{enemyHand.userName}}</div>
-      <div>{{enemyHand.rank}}</div>
+      <div>{{enemyHand.userName}}</div>
+      <div class="mytext">{{enemyHand.rank}}</div>
     </div>
+  </div>
+  <div class="rounds">
+    <strong>Round: {{game.round}}/10</strong>
   </div>
   <div class="row">
     <div class="throwing_deck playingCards faceImages">
@@ -89,7 +89,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="stuff row">
+    <div class="stuff row text-center">
       <div class="passButton">
         <button type="button" class="btn btn-warning" [class.invisible]="!isActivePlayer(user)" [attr.disabled]="isActivePlayer(user)? null:true"
           (click)="pass()">
