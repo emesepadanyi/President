@@ -1,11 +1,13 @@
 ﻿using President.Tests.MockClasses;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace President.Tests.ServicesTests
 {
     public class RelationshipServiceTests
     {
+        //GET FRIENDS
         [Fact]
         public void GetFriends_ZeroFriends()
         {
@@ -21,7 +23,7 @@ namespace President.Tests.ServicesTests
             var EsztersFriends = service.GetFriends("2");
             Assert.Single(EsztersFriends);
             Assert.NotNull(EsztersFriends.ToArray()[0]);
-            Assert.Equal("Noncsi", EsztersFriends.ToArray()[0].FirstName);
+            Assert.Equal("Noncsi", EsztersFriends.ToArray()[0].UserName);
         }
 
         [Fact]
@@ -56,7 +58,24 @@ namespace President.Tests.ServicesTests
             var EsztersRequests = service.GetRequests("2");
             Assert.Single(EsztersRequests);
             Assert.NotNull(EsztersRequests.ToArray()[0]);
-            Assert.Equal("Fanni", EsztersRequests.ToArray()[0].FirstName);
+            Assert.Equal("Fanni", EsztersRequests.ToArray()[0].UserName);
+        }
+
+        //FIND FRIENDS
+        [Fact]
+        public void FindUsers_EmptyResoults()
+        {
+            var service = new RelationshipServiceWithMockDb();
+            var resoults = service.FindUsers("2", "ABCDE");
+            Assert.Empty(resoults);
+        }
+
+        [Fact]
+        public void FindUsers_SomeResoults()
+        {
+            var service = new RelationshipServiceWithMockDb();
+            var resoults = service.FindUsers("2", "a");
+            Assert.Single(resoults);
         }
 
         //ACCEPT REQUESTS
@@ -95,6 +114,24 @@ namespace President.Tests.ServicesTests
             var EsztersFriends = service.GetFriends("2");
             Assert.Empty(FannisFriends);
             Assert.Single(EsztersFriends);
+        }
+
+        [Fact]
+        public void CreateRequest_RequestAlreadyExists_ReturnFalse()
+        {
+            var service = new RelationshipServiceWithMockDb();
+            var actual = service.CreateRequest("1", "2");
+            Assert.False(actual);
+        }
+
+        [Fact]
+        public void CreateRequest_NewRequest_ReturnTrue()
+        {
+            var service = new RelationshipServiceWithMockDb();
+            var numberOfRelationships = RelationshipServiceWithMockDb.Context.Relationships.Count();
+            var actual = service.CreateRequest("1", "4");
+            Assert.True(actual);
+            Assert.Equal(numberOfRelationships+1, RelationshipServiceWithMockDb.Context.Relationships.Count());
         }
     }
 }

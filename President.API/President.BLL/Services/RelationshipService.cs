@@ -43,20 +43,21 @@ namespace President.BLL.Services
         public virtual List<User> FindUsers(string userId, string keyWord)
         {
             var finalUsers = new List<User>();
-            context.Users.
-                Where(user => user.Id != userId &&
-                          (user.FirstName.Contains(keyWord) ||
-                          user.LastName.Contains(keyWord) ||
-                          user.UserName.Contains(keyWord))).ToList()
-                .ForEach(user =>
+
+            var resoults = context.Users
+                .Where(user => user.Id != userId &&
+                      user.UserName.Contains(keyWord))
+                .ToList();
+
+            resoults.ForEach(user =>
+            {
+                if (context.Relationships.Where(rel =>
+                        (rel.Sender.Id == userId && rel.Receiver.Id == user.Id) ||
+                        (rel.Sender.Id == user.Id && rel.Receiver.Id == userId)).FirstOrDefault() == null)
                 {
-                    if (context.Relationships.Where(rel =>
-                            (rel.Sender.Id == userId && rel.Receiver.Id == user.Id) ||
-                            (rel.Sender.Id == user.Id && rel.Receiver.Id == userId)).FirstOrDefault() == null)
-                    {
-                        finalUsers.Add(user);
-                    }
-                });
+                    finalUsers.Add(user);
+                }
+            });
 
             return finalUsers;
         }
