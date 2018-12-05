@@ -1,5 +1,4 @@
 <div class="card">
-    <img src="{{user.profilePicture}}" alt="pic" style="width:100%">
     <h1>{{user.userName}}</h1>
     <div *ngIf="request">
         <button type="button" class="btn btn-outline-success" (click)="accept(user.id)">Accept</button>
