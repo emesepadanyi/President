@@ -31,7 +31,7 @@ namespace President.API.Controllers
             var userId = _caller.Claims.Single(c => c.Type == "id");
             var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userId.Value);
 
-            return new OkObjectResult(_appDbContext.PlayerStatistics.Where((stats) => stats.User.Id == user.Id).FirstOrDefault());
+            return new OkObjectResult(_appDbContext.PlayerStatistics.Where((stats) => stats.UserId == user.Id).FirstOrDefault());
         }
     }
 }

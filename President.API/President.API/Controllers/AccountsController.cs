@@ -38,7 +38,8 @@ namespace President.API.Controllers
 
             if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
 
-            //await _presidentDbContext.Customers.AddAsync(new Customer { IdentityId = userIdentity.Id, Location = model.Location });
+            await _presidentDbContext.PlayerStatistics.AddAsync(new PlayerStatistics() { UserId = userIdentity.Id, GamesPlayed = 0, SumPointsEarned = 0, TimesWon = 0});
+
             await _presidentDbContext.SaveChangesAsync();
 
             return new OkObjectResult("Account created");
