@@ -22,6 +22,6 @@ export class FindFriendsComponent implements OnInit {
   }
 
   sendRequest(userId: string){
-    this.friendService.sendRequest(userId).subscribe(() => {});
+    this.friendService.sendRequest(userId).subscribe(() => { this.hits = this.hits.filter(obj => obj.id !== userId); });
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { HomeDetails } from '../models/home.details.interface';
 import { DashboardService } from '../services/dashboard.service';
+import { PlayerStatistics } from '../models/player.statistics.interface';
 
 @Component({
   selector: 'app-home',
@@ -9,19 +10,16 @@ import { DashboardService } from '../services/dashboard.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-
-  homeDetails: HomeDetails;
+  userName: string;
+  stats: PlayerStatistics;
 
   constructor(private dashboardService: DashboardService) { }
 
   ngOnInit() {
-
+    this.userName = localStorage.getItem('user_name');
     this.dashboardService.getHomeDetails()
-    .subscribe((homeDetails: HomeDetails) => {
-      this.homeDetails = homeDetails;
-    },
-    error => {
-      //this.notificationService.printErrorMessage(error);
+    .subscribe((stats: PlayerStatistics) => {
+      this.stats = stats;
     });
   }
 }

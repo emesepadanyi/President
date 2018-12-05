@@ -31,13 +31,7 @@ namespace President.API.Controllers
             var userId = _caller.Claims.Single(c => c.Type == "id");
             var user = await _appDbContext.Users.SingleAsync(dbUser => dbUser.Id == userId.Value);
 
-            return new OkObjectResult(new
-            {
-                Message = "This is secure API and user data!",
-                user.FirstName,
-                user.LastName,
-                user.PictureUrl
-            });
+            return new OkObjectResult(_appDbContext.PlayerStatistics.Where((stats) => stats.User.Id == user.Id).FirstOrDefault());
         }
     }
 }

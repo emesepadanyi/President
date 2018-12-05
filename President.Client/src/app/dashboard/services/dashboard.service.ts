@@ -10,6 +10,7 @@ import { Observable } from 'rxjs/Rx';
 
 // Add the RxJS Observable operators we need in this app.
 import '../../rxjs-operators';
+import { PlayerStatistics } from '../models/player.statistics.interface';
 
 @Injectable()
 
@@ -19,7 +20,7 @@ export class DashboardService extends BaseService {
     super();
   }
 
-  getHomeDetails(): Observable<HomeDetails> {
+  getHomeDetails(): Observable<PlayerStatistics> {
     let headers = this.getHeader();
 
     return this.http.get(this.configService.getApiURI() + "/dashboard/home", { headers })
