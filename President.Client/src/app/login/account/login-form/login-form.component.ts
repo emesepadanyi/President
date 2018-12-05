@@ -18,7 +18,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   errors: string;
   isRequesting: boolean;
   submitted: boolean = false;
-  credentials: Credentials = { email: '', password: '' };
+  credentials: Credentials = { userName: '', password: '' };
 
   constructor(private userService: UserService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
@@ -26,7 +26,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     this.subscription = this.activatedRoute.queryParams.subscribe(
       (param: any) => {
         this.brandNew = param['brandNew'];
-        this.credentials.email = param['email'];
+        this.credentials.userName = param['userName'];
       });
 
   }
@@ -40,7 +40,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     this.isRequesting = true;
     this.errors = '';
     if (valid) {
-      this.userService.login(value.email, value.password)
+      this.userService.login(value.userName, value.password)
         .finally(() => this.isRequesting = false)
         .subscribe(
           result => {

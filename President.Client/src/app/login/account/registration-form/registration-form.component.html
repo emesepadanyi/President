@@ -8,15 +8,10 @@
     <div class="col-md-6">
         <form #f="ngForm" novalidate (ngSubmit)="registerUser(f)">
             <div class="form-group">
-                <label for="first-name">First name</label>
-                <input type="text" class="form-control" id="first-name" placeholder="First name" name="firstName" tmFocus ngModel>              
+                <label for="user-name">User name</label>
+                <input type="text" class="form-control" id="user-name" placeholder="User name" name="userName" tmFocus ngModel>
             </div>
             
-            <div class="form-group">
-                <label for="last-name">Last name</label>
-                <input type="text" class="form-control" id="last-name" placeholder="Last name" name="lastName" ngModel>              
-            </div>
-
             <div class="form-group">
                 <label for="email">Email</label>
                 <input id="email" type="text" required name="email" validateEmail class="form-control" placeholder="Email" ngModel  #email="ngModel">
