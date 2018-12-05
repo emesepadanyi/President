@@ -4,8 +4,7 @@ namespace President.DAL.Entities
 {
     public class User : IdentityUser
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
         public string PictureUrl { get; set; }
+        public PlayerStatistics PlayerStatistics { get; set; }
     }
 }

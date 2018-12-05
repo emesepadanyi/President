@@ -92,10 +92,10 @@ namespace President.Tests.ControllersTests
         static private RelationshipService MockRelationshipService()
         {
             var mock = new Mock<RelationshipServiceWithMockDb>() { CallBase = true };
-            mock.Setup(service => service.GetFriends(returnsValue)).Returns(new List<User>() { new User() { FirstName = "Eszter" } });
+            mock.Setup(service => service.GetFriends(returnsValue)).Returns(new List<User>() { new User() { UserName = "Eszter" } });
             mock.Setup(service => service.GetFriends(returnsNull)).Returns(new List<User>());
 
-            mock.Setup(service => service.FindUsers(returnsValue, "a")).Returns(new List<User>() { new User() { FirstName = "Eszter" } });
+            mock.Setup(service => service.FindUsers(returnsValue, "a")).Returns(new List<User>() { new User() { UserName = "Eszter" } });
             mock.Setup(service => service.FindUsers(returnsNull, "a")).Returns(new List<User>());
 
             return mock.Object;

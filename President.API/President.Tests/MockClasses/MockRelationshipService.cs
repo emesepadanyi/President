@@ -13,7 +13,7 @@ namespace President.Tests.MockClasses
         public static IRelationshipService Get(string userId)
         {
             var mock = new Mock<RelationshipServiceWithMockDb>() { CallBase = true };
-            mock.Setup(service => service.GetRequests(returnsValue)).Returns(new List<User>() { new User() { FirstName = "Eszter" } });
+            mock.Setup(service => service.GetRequests(returnsValue)).Returns(new List<User>() { new User() { UserName = "Eszter" } });
             mock.Setup(service => service.GetRequests(returnsNull)).Returns(new List<User>());
 
             mock.Setup(service => service.AcceptRequest(returnsValue, returnsValue)).Returns(true);
