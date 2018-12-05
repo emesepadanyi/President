@@ -8,10 +8,6 @@ namespace President.Tests.MockClasses
 {
     public class RelationshipServiceWithMockDb : RelationshipService
     {
-        public RelationshipServiceWithMockDb(PresidentDbContext c) : base(DbInit())
-        {
-        }
-
         public RelationshipServiceWithMockDb() : base(DbInit())
         {
         }

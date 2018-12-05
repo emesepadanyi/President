@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using President.BLL.Dtos;
 using President.BLL.Game;
+using President.BLL.Services;
 using President.API.Helpers;
 using President.API.Hubs;
 using President.API.ViewModels;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using President.BLL.Services;
 
 namespace President.API.Controllers
 {

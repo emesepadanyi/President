@@ -9,7 +9,7 @@ namespace President.Tests.ServicesTests
     {
         //GET FRIENDS
         [Fact]
-        public void GetFriends_ZeroFriends()
+        public void GetFriends_ZeroFriends_ZeroFriendReturned()
         {
             var service = new RelationshipServiceWithMockDb();
             var FannisFriends = service.GetFriends("1");
@@ -17,7 +17,7 @@ namespace President.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetFriends_OneSended()
+        public void GetFriends_OneSended_OneFriendReturned()
         {
             var service = new RelationshipServiceWithMockDb();
             var EsztersFriends = service.GetFriends("2");
@@ -27,7 +27,7 @@ namespace President.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetFriends_OneRecieved()
+        public void GetFriends_OneReceived_OneFriendReturned()
         {
             var service = new RelationshipServiceWithMockDb();
             var NoncsisFriends = service.GetFriends("3");
@@ -36,7 +36,7 @@ namespace President.Tests.ServicesTests
 
         //GET REQUESTS
         [Fact]
-        public void GetRequests_ZeroRequests()
+        public void GetRequests_ZeroRequests_ZeroRequestReturned()
         {
             var service = new RelationshipServiceWithMockDb();
             var BlankasRequests = service.GetRequests("4");
@@ -44,7 +44,7 @@ namespace President.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetRequests_OneSended()
+        public void GetRequests_OneSended_ZeroRequestReturned()
         {
             var service = new RelationshipServiceWithMockDb();
             var FannisRequests = service.GetRequests("1");
@@ -52,18 +52,17 @@ namespace President.Tests.ServicesTests
         }
 
         [Fact]
-        public void GetRequests_OneRecieved()
+        public void GetRequests_OneReceived_OneUserReturned()
         {
             var service = new RelationshipServiceWithMockDb();
             var EsztersRequests = service.GetRequests("2");
             Assert.Single(EsztersRequests);
-            Assert.NotNull(EsztersRequests.ToArray()[0]);
             Assert.Equal("Fanni", EsztersRequests.ToArray()[0].UserName);
         }
 
         //FIND FRIENDS
         [Fact]
-        public void FindUsers_EmptyResoults()
+        public void FindUsers_NoMatch_EmptyResoults()
         {
             var service = new RelationshipServiceWithMockDb();
             var resoults = service.FindUsers("2", "ABCDE");
@@ -71,7 +70,7 @@ namespace President.Tests.ServicesTests
         }
 
         [Fact]
-        public void FindUsers_SomeResoults()
+        public void FindUsers_OneMatch_SomeResoults()
         {
             var service = new RelationshipServiceWithMockDb();
             var resoults = service.FindUsers("2", "a");
@@ -80,14 +79,14 @@ namespace President.Tests.ServicesTests
 
         //ACCEPT REQUESTS
         [Fact]
-        public void AcceptRequest_RequestNotFound()
+        public void AcceptRequest_InvalidRequest_ThrowError()
         {
             var service = new RelationshipServiceWithMockDb();
             Assert.Throws<InvalidOperationException>(() => service.AcceptRequest("2", "3"));
         }
 
         [Fact]
-        public void AcceptRequest_RequestFound()
+        public void AcceptRequest_ValidRequest_RequestFound()
         {
             var service = new RelationshipServiceWithMockDb();
             service.AcceptRequest("1", "2");
@@ -99,14 +98,14 @@ namespace President.Tests.ServicesTests
 
         //REJECT REQUEST
         [Fact]
-        public void RejectRequest_RequestNotFound()
+        public void RejectRequest_InvalidRequest_ThrowError()
         {
             var service = new RelationshipServiceWithMockDb();
             Assert.Throws<InvalidOperationException>(() => service.RejectRequest("2", "3"));
         }
 
         [Fact]
-        public void RejectRequest_RequestFound()
+        public void RejectRequest_ValidRequest_RequestFound()
         {
             var service = new RelationshipServiceWithMockDb();
             service.RejectRequest("1", "2");

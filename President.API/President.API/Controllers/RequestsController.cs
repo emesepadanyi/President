@@ -27,8 +27,7 @@ namespace President.API.Controllers
             relatioshipService = _relatioshipService;
             mapper = _mapper;
 
-            ClaimsPrincipal caller = httpContextAccessor.HttpContext.User;
-            userId = relatioshipService.GetUser(caller);
+            userId = relatioshipService.GetUser(httpContextAccessor.HttpContext.User);
         }
 
         // GET: api/requests

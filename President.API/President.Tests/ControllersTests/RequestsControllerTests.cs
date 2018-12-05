@@ -1,17 +1,8 @@
-﻿using AutoMapper;
-using AutoMapper.Configuration;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
+﻿using Microsoft.AspNetCore.Mvc;
 using President.API.Controllers;
 using President.BLL.Dtos;
-using President.BLL.Mapping;
 using President.Tests.MockClasses;
-using President.BLL.Services;
-using President.DAL.Entities;
-using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using Xunit;
 
 namespace President.Tests.ControllersTests
@@ -20,144 +11,72 @@ namespace President.Tests.ControllersTests
     {
         const string returnsValue = "1";
         const string returnsNull = "2";
-        private static RequestsController happyRequestsController;
 
-        public RequestsController HappyRequestsController
+        public RequestsController RequestsController(string userId)
         {
-            get
-            {
-                if (happyRequestsController == null)
-                {
-                    happyRequestsController = new RequestsController(
-                        HappyMockHttpContextAccessor(),
-                        MockRelationshipService(),
-                        MapperConfig.MapperInstance
-                    );
-                }
-                return happyRequestsController;
-            }
+            return new RequestsController(
+                MockHttpContextAccessor.Get(userId),
+                MockRelationshipService.Get(userId),
+                MapperConfig.MapperInstance);
         }
-
-        private static RequestsController sadRequestsController;
-
-        public RequestsController SadRequestsController
-        {
-            get
-            {
-                if (sadRequestsController == null)
-                {
-                    sadRequestsController = new RequestsController(
-                        SadMockHttpContextAccessor(),
-                        MockRelationshipService(),
-                        MapperConfig.MapperInstance
-                    );
-                }
-                return sadRequestsController;
-            }
-        }
-
+        
         [Fact]
-        public void GetRequests_ReturnOkWithRequestst()
+        public void GetRequests_HasRequests_ReturnOkWithRequestst()
         {
-            IActionResult actual = HappyRequestsController.Requests();
+            IActionResult actual = RequestsController(returnsValue).Requests();
 
             Assert.Equal(typeof(OkObjectResult), actual.GetType());
             Assert.Single((IList<UserDto>)((OkObjectResult)actual).Value);
         }
 
         [Fact]
-        public void GetRequests_ReturnNotFound()
+        public void GetRequests_NoRequests_ReturnNotFound()
         {
-            IActionResult actual = SadRequestsController.Requests();
+            IActionResult actual = RequestsController(returnsNull).Requests();
             Assert.Equal(typeof(OkObjectResult), actual.GetType());
             Assert.Empty((IList<UserDto>)((OkObjectResult)actual).Value);
         }
 
         [Fact]
-        public void AcceptRequest_ReturnOk()
+        public void AcceptRequest_ValidRequest_ReturnOk()
         {
-            IActionResult actual = HappyRequestsController.AcceptRequest(new UserDto() { Id = returnsValue });
+            IActionResult actual = RequestsController(returnsValue).AcceptRequest(new UserDto() { Id = returnsValue });
             Assert.Equal(typeof(OkObjectResult), actual.GetType());
         }
 
         [Fact]
-        public void AcceptRequest_ReturnNotFound()
+        public void AcceptRequest_InvalidRequest_ReturnNotFound()
         {
-            IActionResult actual = SadRequestsController.AcceptRequest(new UserDto() { Id = returnsNull });
+            IActionResult actual = RequestsController(returnsNull).AcceptRequest(new UserDto() { Id = returnsNull });
             Assert.Equal(typeof(NotFoundResult), actual.GetType());
         }
 
         [Fact]
-        public void RejectRequest_ReturnOk()
+        public void RejectRequest_ValidRequest_ReturnOk()
         {
-            IActionResult actual = HappyRequestsController.RejectRequest(new UserDto() { Id = returnsValue });
+            IActionResult actual = RequestsController(returnsValue).RejectRequest(new UserDto() { Id = returnsValue });
             Assert.Equal(typeof(OkResult), actual.GetType());
         }
 
         [Fact]
-        public void RejectRequest_ReturnNotFound()
+        public void RejectRequest_InvalidRequest_ReturnNotFound()
         {
-            IActionResult actual = SadRequestsController.RejectRequest(new UserDto() { Id = returnsNull });
+            IActionResult actual = RequestsController(returnsNull).RejectRequest(new UserDto() { Id = returnsNull });
             Assert.Equal(typeof(NotFoundResult), actual.GetType());
         }
 
         [Fact]
-        public void CreateRequest_ReturnOk()
+        public void CreateRequest_NotYetExists_ReturnOk()
         {
-            IActionResult actual = HappyRequestsController.CreateRequest(new UserDto() { Id = returnsValue });
+            IActionResult actual = RequestsController(returnsValue).CreateRequest(new UserDto() { Id = returnsValue });
             Assert.Equal(typeof(OkResult), actual.GetType());
         }
 
         [Fact]
-        public void CreateRequest_ReturnNotFound()
+        public void CreateRequest_AlreadyExists_ReturnNotFound()
         {
-            IActionResult actual = SadRequestsController.CreateRequest(new UserDto() { Id = returnsNull });
+            IActionResult actual = RequestsController(returnsNull).CreateRequest(new UserDto() { Id = returnsNull });
             Assert.Equal(typeof(NotFoundResult), actual.GetType());
-        }
-
-        static private RelationshipService MockRelationshipService()
-        {
-            var mock = new Mock<RelationshipServiceWithMockDb>() { CallBase = true };
-            mock.Setup(service => service.GetRequests(returnsValue)).Returns(new List<User>() { new User() { FirstName = "Eszter" } });
-            mock.Setup(service => service.GetRequests(returnsNull)).Returns(new List<User>());
-
-            mock.Setup(service => service.AcceptRequest(returnsValue, returnsValue)).Returns(true);
-            mock.Setup(service => service.AcceptRequest(returnsNull, returnsNull)).Throws<InvalidOperationException>();
-
-            mock.Setup(service => service.RejectRequest(returnsValue, returnsValue)).Returns(true);
-            mock.Setup(service => service.RejectRequest(returnsNull, returnsNull)).Throws<InvalidOperationException>();
-
-            mock.Setup(service => service.CreateRequest(returnsValue, returnsValue)).Returns(true);
-            mock.Setup(service => service.CreateRequest(returnsNull, returnsNull)).Returns(false);
-            return mock.Object;
-        }
-
-        private IHttpContextAccessor HappyMockHttpContextAccessor()
-        {
-            var caller = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim("id", returnsValue),
-            }));
-
-            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            mockHttpContextAccessor.SetupGet(m => m.HttpContext.User)
-                .Returns(caller);
-
-            return mockHttpContextAccessor.Object;
-        }
-
-        private IHttpContextAccessor SadMockHttpContextAccessor()
-        {
-            var caller = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim("id", returnsNull),
-            }));
-
-            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            mockHttpContextAccessor.SetupGet(m => m.HttpContext.User)
-                .Returns(caller);
-
-            return mockHttpContextAccessor.Object;
         }
     }
 }

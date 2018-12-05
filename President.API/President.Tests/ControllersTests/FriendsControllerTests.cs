@@ -6,7 +6,6 @@ using President.BLL.Dtos;
 using President.BLL.Services;
 using President.DAL.Entities;
 using President.Tests.MockClasses;
-using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Xunit;
