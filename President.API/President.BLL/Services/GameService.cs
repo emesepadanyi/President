@@ -85,7 +85,7 @@ namespace President.BLL.Services
                 if (winners.Contains(userName)) stats.TimesWon += 1;
 
                 return stats;
-            });
+            }).ToList();
 
             context.SaveChanges();
             Games.TryTake(out game);
