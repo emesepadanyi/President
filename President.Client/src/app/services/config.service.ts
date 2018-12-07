@@ -6,7 +6,6 @@ export class ConfigService {
     _apiURI : string;
  
     constructor() {
-      //TODO chage this
         this._apiURI = 'https://localhost:5001/api';
      }
  

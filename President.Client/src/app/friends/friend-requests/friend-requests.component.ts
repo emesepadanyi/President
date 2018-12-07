@@ -21,7 +21,6 @@ export class FriendRequestsComponent implements OnInit {
   }
 
   acceptRequest(userId: string) {
-    //Must subscribe othervise doesnt run properly
     this.friendService.acceptRequest(userId)
       .subscribe(() => {
         //TODO nice notification
@@ -30,9 +29,8 @@ export class FriendRequestsComponent implements OnInit {
   }
 
   rejectRequest(userId: string) {
-    //Must subscribe othervise doesnt run properly
     this.friendService.rejectRequest(userId).subscribe(() => {
-      //TODO nice notification etc
+      //TODO nice notification
       this.updateMyRequests();
     });
   }
