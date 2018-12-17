@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import { HomeDetails } from '../models/home.details.interface';
 import { DashboardService } from '../services/dashboard.service';
 import { PlayerStatistics } from '../models/player.statistics.interface';
 
