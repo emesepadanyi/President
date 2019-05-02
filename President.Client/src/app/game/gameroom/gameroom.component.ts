@@ -11,6 +11,7 @@ import { NewRound } from '../models/new.round.interface';
 import * as $ from 'jquery';
 import { EndStatistics } from '../models/end.statistics.interface';
 import { UsersStatus } from '../models/users-status.interface';
+import { ConfigService } from '../../services/config.service';
 
 
 @Component({
@@ -27,14 +28,14 @@ export class GameroomComponent implements OnInit, OnDestroy {
   private endStatistics: EndStatistics;
   usersStatus: UsersStatus;
 
-  constructor(private gameService: GameService) { }
+  constructor(private gameService: GameService, private configService: ConfigService) { }
 
   ngOnInit(): void {
     let authToken = localStorage.getItem('auth_token');
     this.user = localStorage.getItem('user_name');
 
     this._hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:5001/gameHub", { accessTokenFactory: () => authToken })
+      .withUrl(this.configService.getHubURI() + "/gameHub", { accessTokenFactory: () => authToken })
       .build();
 
     this._hubConnection

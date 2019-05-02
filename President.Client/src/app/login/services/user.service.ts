@@ -67,7 +67,7 @@ export class UserService extends BaseService {
     let authToken = localStorage.getItem('auth_token');
 
     this._hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:5001/online", { accessTokenFactory: () => authToken })
+      .withUrl(this.configService.getHubURI() + "/online", { accessTokenFactory: () => authToken })
       .build();
 
     this._hubConnection

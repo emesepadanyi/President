@@ -6,7 +6,6 @@ using President.BLL.Dtos;
 using President.BLL.Services;
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace President.API.Controllers
 {

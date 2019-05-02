@@ -23,7 +23,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     let authToken = localStorage.getItem('auth_token');
 
     this._hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:5001/chat", { accessTokenFactory: () => authToken })
+      .withUrl(this.configService.getHubURI() + "/chat", { accessTokenFactory: () => authToken })
       .build();
 
     this._hubConnection
